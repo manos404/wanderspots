@@ -1,6 +1,7 @@
 import Image from "next/image";
 import compass from "../../public/compass.png";
 import human from "../../public/human.png";
+import plane from "../../public/flight.png";
 export default function Navbar() {
   return (
     <div className="flex justify-between shadow-xl p-5">
@@ -11,6 +12,8 @@ export default function Navbar() {
           <p className="text-xl">Discover & share amazing places</p>
         </div>
       </div>
+          <Image src={plane} alt="" className="w-15 h-15" />
+
       <div className=" flex gap-5 ">
         <button className="text-2xl cursor-pointer">Log in</button>
         <div></div>
