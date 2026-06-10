@@ -1,15 +1,38 @@
+"use client";
 import { Lock, Mail, X } from "lucide-react";
-
+import { useActionState } from "react";
+import { isEmail, isNotEmpty, hasMinLength } from "../util/validation";
 export default function Modal() {
+  function SigninAction(prevFormState, formData) {
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    let errors = [];
+    if (!isEmail(email)) {
+      errors.push("Invalid email address.");
+    }
+    if (!isNotEmpty(password) || !hasMinLength(password, 6)) {
+      errors.push("You must provide a password with at least six characters.");
+    }
+    console.log(errors);
+    if (errors.length > 0) {
+      return { errors };
+    }
+    return { errors: null };
+  }
+
+  const [formState, formAction] = useActionState(SigninAction, {
+    errors: null,
+  });
+
   return (
     <dialog open className="m-auto w-100 h-100  rounded-4xl text-white">
-       
       <div className="p-3 pl-7 pb-7 bg-gradient-to-br from-blue-600 rounded-t-lg to-purple-600">
-        <X className="ml-auto"/>
+        <X className="ml-auto" />
         <h1 className="text-2xl font-bold  ">Welcome Back!</h1>
         <p className="text-sm pt-2">Sign in to continue</p>
       </div>
-      <form>
+      <form action={formAction}>
         <div className=" flex flex-col p-7   text-gray-400">
           <label htmlFor="email">Email</label>
           <div className="relative mt-2">
@@ -17,6 +40,7 @@ export default function Modal() {
 
             <input
               type="email"
+              name="email"
               placeholder="email@example.com"
               className="w-full h-10 rounded-xl border border-gray-300 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
@@ -36,10 +60,19 @@ export default function Modal() {
               className="w-full border border-gray-300 rounded-xl h-12 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
+          {formState.errors && (
+            <ul className="text-red-600 text-sm pt-1  pl-3 list-disc">
+              {formState.errors.map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          )}
         </div>
-        <div className="flex justify-center   mx-5 h-12">
-        <button className=" bg-gradient-to-br from-blue-600   rounded-2xl to-purple-600  w-[80%] hover:from-blue-700 hover:to-purple-700 transition-all">Sign in</button>
 
+        <div className="flex justify-center   mx-5 h-12">
+          <button className=" bg-gradient-to-br from-blue-600   rounded-2xl to-purple-600  w-[80%] hover:from-blue-700 hover:to-purple-700 transition-all">
+            Sign in
+          </button>
         </div>
       </form>
     </dialog>
