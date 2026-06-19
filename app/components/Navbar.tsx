@@ -3,6 +3,7 @@ import compass from "../../public/compass.png";
 import plane from "../../public/flight.png";
 import { User } from "lucide-react";
 export default function Navbar() {
+  
   return (
     <div className="flex justify-between shadow-xl pt-5 pb-2">
       <div className="flex ml-30  row gap-5">
