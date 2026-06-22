@@ -10,6 +10,7 @@ interface ModalStore {
 
 export const useModalStore = create<ModalStore>((set) => ({
     activeModal: null,
-    openModal: (type) => set({ activeModal: type }),
+    openModal: (type) =>
+        set({ activeModal: type }),
     closeModal: () => set({ activeModal: null })
 }))

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Spot } from "../types/spot";
+import { Spot } from "../../app/types/spot";
 import { Calendar, Heart, MapPin } from "lucide-react";
 
 interface CardProps {

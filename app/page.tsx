@@ -1,7 +1,7 @@
-import Card from "./components/Card";
+import Card from "../components/Card";
 import { Spot } from "./types/spot";
 import { mockSpots } from "./data";
-import Modal from "./components/Modal";
+import Modal from "../components/Modal";
  export default function Home() {
    return (
     <div className=" grid grid-cols-3 mx-30 gap-10">
