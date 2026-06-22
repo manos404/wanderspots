@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import compass from "../public/compass.png"
+import compass from "../public/compass.png";
 import plane from "../../public/flight.png";
 import { User } from "lucide-react";
 import { useModalStore } from "@/app/store/useModalStore";
