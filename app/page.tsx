@@ -7,7 +7,17 @@ import { LayoutGrid, Map, Search } from "lucide-react";
 import { useState } from "react";
 export default function Home() {
   const [activeButton, setActiveButton] = useState("map");
+  const [allSpots, setAllSpots] = useState(mockSpots);
+  const [filteredSpots, setFilteredSpots] = useState(mockSpots);
 
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    const filtered = allSpots.filter((spot) =>
+      spot.title.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredSpots(filtered);
+    console.log(filtered);
+  };
   return (
     <>
       <div className=" flex justify-between mx-30 items-center">
@@ -41,17 +51,20 @@ export default function Home() {
             type="text"
             placeholder="Search city or location..."
             className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 outline-none  focus:border-2 focus:border-blue-500"
+            onChange={(e) => handleSearch(e)}
           />
         </div>
       </div>
       {activeButton === "grid" && (
         <div className=" grid grid-cols-3 mx-30   gap-10">
-          <Card spot={mockSpots[0]} />
-          <Card spot={mockSpots[1]} />
+          {filteredSpots.map((spot) => (
+            <Card key={spot.id} spot={spot} />
+          ))}
+          {/* <Card spot={mockSpots[1]} />
           <Card spot={mockSpots[2]} />
           <Card spot={mockSpots[3]} />
           <Card spot={mockSpots[4]} />
-          <Card spot={mockSpots[5]} />
+          <Card spot={mockSpots[5]} /> */}
           <Modal />
         </div>
       )}
