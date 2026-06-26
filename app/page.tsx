@@ -3,8 +3,9 @@ import Card from "../components/Card";
 import { Spot } from "./types/spot";
 import { mockSpots } from "./data";
 import Modal from "../components/Modal";
-import { LayoutGrid, Map, Search } from "lucide-react";
+import { LayoutGrid, Map as MapIcon, Search } from "lucide-react";
 import { useState } from "react";
+import Map from "../components/Map";
 export default function Home() {
   const [activeButton, setActiveButton] = useState("map");
   const [allSpots, setAllSpots] = useState(mockSpots);
@@ -19,10 +20,10 @@ export default function Home() {
     console.log(filtered);
   };
   return (
-    <>
-      <div className=" flex justify-between mx-30 items-center">
+    <div className="mx-30 ">
+      <div className=" flex justify-between   items-center">
         <div className="flex gap-5  my-10 items-center">
-          <p>6 amazing spots discovered</p>
+          <p>{filteredSpots.length} amazing spots discovered</p>
           <div className="flex flex-row gap-3   px-1 rounded-lg bg-gray-100 text-sm p-1">
             <button
               className={`flex gap-1 items-center rounded-md  px-2 py-1.5 ${
@@ -30,7 +31,7 @@ export default function Home() {
               }`}
               onClick={() => setActiveButton("map")}
             >
-              <Map size={18} /> <span>Map</span>
+              <MapIcon size={18} /> <span>Map</span>
             </button>
             <button
               className={`flex gap-1 items-center rounded-md px-2 py-1.5 ${
@@ -55,11 +56,14 @@ export default function Home() {
           />
         </div>
       </div>
+      {activeButton === "map" && <Map spots={filteredSpots} />}
+
       {activeButton === "grid" && (
-        <div className=" grid grid-cols-3 mx-30   gap-10">
+        <div className=" grid grid-cols-3 gap-10">
           {filteredSpots.map((spot) => (
             <Card key={spot.id} spot={spot} />
           ))}
+
           {/* <Card spot={mockSpots[1]} />
           <Card spot={mockSpots[2]} />
           <Card spot={mockSpots[3]} />
@@ -68,6 +72,6 @@ export default function Home() {
           <Modal />
         </div>
       )}
-    </>
+    </div>
   );
 }
