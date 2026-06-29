@@ -9,7 +9,6 @@ export default function AuthForm() {
   function SigninAction(prevFormState, formData) {
     const email = formData.get("email");
     const password = formData.get("password");
-
     const errors = []; //
     if (!isEmail(email)) {
       errors.push("Invalid email address.");
