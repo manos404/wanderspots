@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { useModalStore } from "@/app/store/useModalStore";
 import { signIn } from "next-auth/react";
 export default function AuthForm() {
-  const { activeModal, openModal } = useModalStore();
+  const { activeModal, openModal, closeModal } = useModalStore();
   // let activeModal === 'signup' = false;
 
   async function SigninAction(prevFormState, formData) {
@@ -30,6 +30,7 @@ export default function AuthForm() {
     if (result?.error) {
       return { errors: ["Invalid eamil or password"] };
     }
+    closeModal();
     return { errors: null };
   }
 

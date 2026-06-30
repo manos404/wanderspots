@@ -4,8 +4,12 @@ import compass from "../public/compass.png";
 import plane from "../../public/flight.png";
 import { User } from "lucide-react";
 import { useModalStore } from "@/app/store/useModalStore";
+import { signOut, useSession } from "next-auth/react";
+
 export default function Navbar() {
   const { openModal } = useModalStore();
+  const { data: session } = useSession();
+
   return (
     <div className="flex justify-between shadow-xl pt-5 pb-2">
       <div className="flex ml-30  row gap-5">
@@ -20,20 +24,30 @@ export default function Navbar() {
       {/* <Image src={plane} alt="" className="w-15 h-15" /> */}
 
       <div className=" flex gap-5 my-2 mr-30">
-        <button
-          className="text-base  hover:opacity-80 transition-opacity"
-          onClick={() => openModal("login")}
-        >
-          Log in
-        </button>
-        <button
-          className="text-base  bg-blue-600 rounded-2xl items-center px-5 flex row gap-2 justify-center  hover:bg-blue-700 transition-colors text-white"
-          onClick={() => openModal("signup")}
-        >
-          {/* <Image src={human} alt="" className="w-6 h-6" /> */}
-          <User className="w-6 h-6" />
-          <span>Sign up</span>
-        </button>
+        {session ? (
+          // είναι logged in
+          <div className="flex items-center gap-3">
+            <span>{session.user?.name}</span>
+            <button onClick={() => signOut()}>Logout</button>
+          </div>
+        ) : (
+          <>
+            <button
+              className="text-base  hover:opacity-80 transition-opacity"
+              onClick={() => openModal("login")}
+            >
+              Log in
+            </button>
+            <button
+              className="text-base  bg-blue-600 rounded-2xl items-center px-5 flex row gap-2 justify-center  hover:bg-blue-700 transition-colors text-white"
+              onClick={() => openModal("signup")}
+            >
+              {/* <Image src={human} alt="" className="w-6 h-6" /> */}
+              <User className="w-6 h-6" />
+              <span>Sign up</span>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
