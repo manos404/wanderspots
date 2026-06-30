@@ -2,12 +2,12 @@ import { hasMinLength, isEmail, isNotEmpty } from "@/app/util/validation";
 import { Lock, Mail, User, X } from "lucide-react";
 import { useActionState } from "react";
 import { useModalStore } from "@/app/store/useModalStore";
-
+import { signIn } from "next-auth/react";
 export default function AuthForm() {
   const { activeModal, openModal } = useModalStore();
   // let activeModal === 'signup' = false;
 
-  function SigninAction(prevFormState, formData) {
+  async function SigninAction(prevFormState, formData) {
     const email = formData.get("email");
     const password = formData.get("password");
     const errors = []; //
@@ -17,9 +17,18 @@ export default function AuthForm() {
     if (!isNotEmpty(password) || !hasMinLength(password, 6)) {
       errors.push("You must provide a password with at least six characters.");
     }
-    console.log(errors);
+
     if (errors.length > 0) {
       return { errors };
+    }
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+    if (result?.error) {
+      return { errors: ["Invalid eamil or password"] };
     }
     return { errors: null };
   }
