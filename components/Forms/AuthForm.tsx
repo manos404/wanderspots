@@ -6,6 +6,7 @@ import { useModalStore } from "@/app/store/useModalStore";
 export default function AuthForm() {
   const { activeModal, openModal } = useModalStore();
   // let activeModal === 'signup' = false;
+
   function SigninAction(prevFormState, formData) {
     const email = formData.get("email");
     const password = formData.get("password");
@@ -23,10 +24,46 @@ export default function AuthForm() {
     return { errors: null };
   }
 
-  const [formState, formAction] = useActionState(SigninAction, {
+  async function SignupAction(prevFormState, formData) {
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    const errors = [];
+    if (!isEmail(email)) {
+      errors.push("Invalid email address.");
+    }
+    if (!isNotEmpty(password) || !hasMinLength(password, 6)) {
+      errors.push("You must provide a password with at least six characters.");
+    }
+
+    if (errors.length > 0) {
+      return { errors };
+    }
+
+    // εδώ θα κάνουμε το fetch
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { errors: [data.error] };
+    }
+    return { errors: null };
+  }
+
+  const [signinState, signinAction] = useActionState(SigninAction, {
     errors: null,
   });
-  const { closeModal } = useModalStore();
+
+  const [signupState, signupAction] = useActionState(SignupAction, {
+    errors: null,
+  });
+  const formAction = activeModal === "signup" ? signupAction : signinAction;
+  const formState = activeModal === "signup" ? signupState : signinState;
+  // const { closeModal } = useModalStore();
 
   return (
     <>
