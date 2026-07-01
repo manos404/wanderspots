@@ -40,6 +40,9 @@ export default function AuthForm() {
     const password = formData.get("password");
 
     const errors = [];
+    if (!isNotEmpty(name)) {
+      errors.push("You must provide a name.");
+    }
     if (!isEmail(email)) {
       errors.push("Invalid email address.");
     }
@@ -61,6 +64,12 @@ export default function AuthForm() {
     if (!res.ok) {
       return { errors: [data.error] };
     }
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+    closeModal();
     return { errors: null };
   }
 

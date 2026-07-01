@@ -2,13 +2,13 @@
 import Image from "next/image";
 import compass from "../public/compass.png";
 import plane from "../../public/flight.png";
-import { User } from "lucide-react";
+import { LogOut, Plus, User } from "lucide-react";
 import { useModalStore } from "@/app/store/useModalStore";
 import { signOut, useSession } from "next-auth/react";
 
 export default function Navbar() {
   const { openModal } = useModalStore();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   return (
     <div className="flex justify-between shadow-xl pt-5 pb-2">
@@ -24,11 +24,23 @@ export default function Navbar() {
       {/* <Image src={plane} alt="" className="w-15 h-15" /> */}
 
       <div className=" flex gap-5 my-2 mr-30">
-        {session ? (
+        {status === "loading" ? null : session ? ( // ή ένα skeleton/spinner
           // είναι logged in
           <div className="flex items-center gap-3">
-            <span>{session.user?.name}</span>
-            <button onClick={() => signOut()}>Logout</button>
+            <button className="text-base  bg-blue-600 rounded-2xl items-center px-5 py-2 flex row gap-2 justify-center  hover:bg-blue-700 transition-colors text-white">
+              <Plus />
+              Add a spot
+            </button>
+            <span className="flex gap-2 items-center  border-l border-gray-300 pl-4 ">
+              {/* <div className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center"> */}
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
+                <User size={15} />
+              </div>
+              {session.user?.name}
+            </span>
+            <button onClick={() => signOut()}>
+              <LogOut />
+            </button>
           </div>
         ) : (
           <>
