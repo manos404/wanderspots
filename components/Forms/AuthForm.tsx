@@ -3,6 +3,7 @@ import { Lock, Mail, User, X } from "lucide-react";
 import { useActionState } from "react";
 import { useModalStore } from "@/app/store/useModalStore";
 import { signIn } from "next-auth/react";
+
 export default function AuthForm() {
   const { activeModal, openModal, closeModal } = useModalStore();
   // let activeModal === 'signup' = false;

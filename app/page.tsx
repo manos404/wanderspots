@@ -81,7 +81,7 @@ export default function Home() {
           <Card spot={mockSpots[5]} /> */}
           </div>
         )}
-      </div> 
+      </div>
     </>
   );
 }
