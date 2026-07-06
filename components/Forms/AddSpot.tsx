@@ -1,45 +1,128 @@
+"use client";
 import { useModalStore } from "@/app/store/useModalStore";
+import { hasMinLength, isNotEmpty } from "@/app/util/validation";
+import { useActionState } from "react";
 
+async function AddSpotAction(prevFormState, formData) {
+  const name = formData.get("name");
+  const category = formData.get("category");
+  const description = formData.get("description");
+  const location = formData.get("location");
+  const image = formData.get("image") as File;
+  const errors = [];
+
+  if (!name) errors.push("Name is required");
+  if (!category) errors.push("Category is required");
+  if (!description) errors.push("Description is required");
+  if (!location) errors.push("Location is required");
+  if (!image || image.size === 0) {
+    errors.push("Image is required");
+  }
+  if (errors.length > 0)
+    return {
+      errors,
+      values: { name, category, description, location },
+    };
+
+  // εδώ θα προσθέσουμε upload + nominatim + save
+  // const uploadForm = new FormData();
+  // uploadForm.append("file", image);
+
+  // const res = await fetch("/api/upload", {
+  //   method: "POST",
+  //   body: uploadForm,
+  // });
+
+  // const data = await res.json();
+  // const imageUrl = data.secure_url;
+  // console.log(imageUrl);
+
+  const query = `${name},${location}`;
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+      query
+    )}&format=jsonv2`
+  );
+  const data = await response.json();
+
+  console.log(data);
+
+  return { errors: null };
+}
 export default function AddSpot() {
   const { activeModal, openModal, closeModal } = useModalStore();
+  const [formState, formAction] = useActionState(AddSpotAction, {
+    errors: null,
+  });
 
   return (
     <>
-      <div className="p-3 pl-7 pb-7 bg-gradient-to-br from-blue-600 rounded-t-lg to-purple-600">
+      <div className="p-3 pl-7 pb-5 bg-gradient-to-br from-blue-600 rounded-t-lg to-purple-600">
         <h1 className="text-2xl font-bold  ">Add Your Favorite Spot</h1>
       </div>
-      <div className="mt-2 pl-7 flex flex-col text-black">
-        <label htmlFor="name">Spot Name</label>
-        <input
-          type="name"
-          name="name"
-          placeholder="e.g. The Cozy Corner"
-          className=" h-10 mt-2  rounded-xl border border-gray-300 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        <label htmlFor="category">Category</label>
-        <select
-          id="category"
-          name="category"
-          className="w-full border rounded p-2 text-black"
-        >
-          <option value="">Select a category</option>
-          <option value="beach">Food & Drink</option>
-          <option value="mountain">Nature</option>
-          <option value="lake">Art & Culture</option>
-          <option value="lake">Architecture</option>
-          <option value="lake">Entertainment</option>
-          <option value="lake">Shopping</option>
-          <option value="lake">Sports & Recreation</option>
-        </select>
-
-        <label htmlFor="description">Description</label>
-        <input
-          type="description"
-          name="description"
-          placeholder="What makes this spot special?"
-          className="w-full h-10 rounded-xl border border-gray-300 pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-      </div>
+      <form action={formAction}>
+        <div className="mt-2 px-7 flex flex-col gap-2 text-black">
+          <label htmlFor="name">Spot Name</label>
+          <input
+            type="name"
+            name="name"
+            placeholder="e.g. The Cozy Corner"
+            defaultValue={formState.values?.name}
+            className=" h-10 mt-2  rounded-xl border border-gray-300 pl-2  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <label htmlFor="category">Category</label>
+          <select
+            id="category"
+            name="category"
+            key={formState.values?.category}
+            defaultValue={formState.values?.category ?? ""}
+            className="w-full h-10  mt-2  border rounded-lg pl-2 text-black"
+          >
+            <option value="">Select a category</option>
+            <option value="Food & Drink">Food & Drink</option>
+            <option value="Nature">Nature</option>
+            <option value="Art & Culture">Art & Culture</option>
+            <option value="Architecture">Architecture</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Sports & Recreation">Sports & Recreation</option>
+          </select>
+          <label htmlFor="description">Description</label>
+          <textarea
+            // type="description"
+            name="description"
+            rows={4}
+            placeholder="What makes this spot special?"
+            defaultValue={formState.values?.description}
+            className="w-full mt-2 resize-y   rounded-xl border border-gray-300 pl-2 pt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <label htmlFor="location">Location</label>
+          <input
+            type="text"
+            name="location"
+            placeholder="e.g., Portland, Oregon"
+            defaultValue={formState.values?.location}
+            className=" h-10 mt-2  rounded-xl border border-gray-300 pl-2  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <label htmlFor="image">Photo</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            className="mt-2 w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+          />
+          {formState.errors && (
+            <ul className="text-red-600 text-sm pt-1  pl-3 list-disc">
+              {formState.errors.map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          )}
+          <button className="mt-4 w-full h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl text-white hover:from-blue-700 hover:to-purple-700 transition-all">
+            Add Spot
+          </button>
+        </div>
+      </form>
     </>
   );
 }
