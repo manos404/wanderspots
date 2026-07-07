@@ -13,7 +13,7 @@ export default function Card({ spot }: CardProps) {
       <div className="relative w-full h-64">
         <Image
           src={spot.imageUrl}
-          alt={spot.title}
+          alt={spot.name}
           fill
           className="object-cover hover:scale-105 transition-transform duration-300"
         />
@@ -21,9 +21,9 @@ export default function Card({ spot }: CardProps) {
 
       {/* CONTENT */}
       <div className="p-3 mt-3">
-        {/* TITLE + CATEGORY */}
+        {/* Name + CATEGORY */}
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-gray-900">{spot.title}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{spot.name}</h2>
 
           <span className="bg-blue-50 px-2 text-blue-700 rounded-2xl text-sm">
             {spot.category}

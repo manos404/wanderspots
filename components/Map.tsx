@@ -37,7 +37,7 @@ export default function Map({ spots = [] }: MapProps) {
           icon={customIcon}
           position={[spot.latitude, spot.longitude]}
         >
-          <Popup>{spot.title}</Popup>
+          <Popup>{spot.name}</Popup>
         </Marker>
       ))}
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

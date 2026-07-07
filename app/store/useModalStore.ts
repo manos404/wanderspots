@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type ModalType = 'login' | 'signup' | null;
+type ModalType = 'login' | 'signup' | "addspot" | null;
 
 interface ModalStore {
     activeModal: ModalType

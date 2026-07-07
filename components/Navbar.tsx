@@ -27,7 +27,10 @@ export default function Navbar() {
         {status === "loading" ? null : session ? ( // ή ένα skeleton/spinner
           // είναι logged in
           <div className="flex items-center gap-3">
-            <button className="text-base  bg-blue-600 rounded-2xl items-center px-5 py-2 flex row gap-2 justify-center  hover:bg-blue-700 transition-colors text-white">
+            <button
+              className="text-base  bg-blue-600 rounded-2xl items-center px-5 py-2 flex row gap-2 justify-center  hover:bg-blue-700 transition-colors text-white"
+              onClick={() => openModal("addspot")}
+            >
               <Plus />
               Add a spot
             </button>

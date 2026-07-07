@@ -1,6 +1,6 @@
 export interface Spot {
     id: string;
-    title: string;
+    name: string;
     description: string;
     location: string;
     latitude: number;

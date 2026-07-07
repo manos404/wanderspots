@@ -3,7 +3,7 @@ import { Spot } from "./types/spot";
 export const mockSpots: Spot[] = [
   {
     id: "1",
-    title: "The Cozy Corner Cafe",
+    name: "The Cozy Corner Cafe",
     description:
       "Best coffee in town with amazing pastries! The atmosphere is warm and welcoming, perfect for working or meeting friends.",
     location: "Portland, Oregon",
@@ -21,7 +21,7 @@ export const mockSpots: Spot[] = [
   },
   {
     id: "2",
-    title: "Eagle Peak Viewpoint",
+    name: "Eagle Peak Viewpoint",
     description:
       "Breathtaking panoramic views of the valley below. A moderate 2-hour hike that's absolutely worth it for sunrise.",
     location: "Boulder, Colorado",
@@ -39,7 +39,7 @@ export const mockSpots: Spot[] = [
   },
   {
     id: "3",
-    title: "Downtown Street Art District",
+    name: "Downtown Street Art District",
     description:
       "Vibrant murals and graffiti art by local and international artists. The artwork changes every few months!",
     location: "Austin, Texas",
@@ -57,7 +57,7 @@ export const mockSpots: Spot[] = [
   },
   {
     id: "4",
-    title: "Sunset Beach",
+    name: "Sunset Beach",
     description:
       "The most beautiful sunsets you'll ever see. Quiet, peaceful, and perfect for evening walks along the shore.",
     location: "Santa Monica, California",
@@ -75,7 +75,7 @@ export const mockSpots: Spot[] = [
   },
   {
     id: "5",
-    title: "The Grand Library",
+    name: "The Grand Library",
     description:
       "Historic library with stunning architecture and an incredible collection. The reading room is absolutely magnificent.",
     location: "Boston, Massachusetts",
@@ -93,7 +93,7 @@ export const mockSpots: Spot[] = [
   },
   {
     id: "6",
-    title: "Zen Garden Sanctuary",
+    name: "Zen Garden Sanctuary",
     description:
       "A peaceful Japanese garden in the heart of the city. Perfect for meditation and finding inner peace.",
     location: "Seattle, Washington",

@@ -8,13 +8,17 @@ export default function Modal() {
   const { activeModal, closeModal } = useModalStore();
   return (
     <Dialog
-      open={true}
-      // open={activeModal === "login" || activeModal === "signup"}
+      // open={true}
+      open={
+        activeModal === "login" ||
+        activeModal === "signup" ||
+        activeModal === "addspot"
+      }
       onOpenChange={(open) => !open && closeModal()}
     >
       <DialogContent className="p-0 m-auto w-100 pb-5   rounded-4xl text-white   ">
         {(activeModal === "login" || activeModal === "signup") && <AuthForm />}
-        <AddSpot />
+        {activeModal === "addspot" && <AddSpot />}
       </DialogContent>
     </Dialog>
   );

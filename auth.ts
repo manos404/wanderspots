@@ -5,6 +5,12 @@ import bcrypt from "bcryptjs"
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    callbacks: {
+        session({ session, token }) {
+            session.user.id = token.sub!
+            return session
+        }
+    },
     providers: [
         Credentials({
             credentials: {

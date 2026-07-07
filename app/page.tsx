@@ -22,7 +22,7 @@ export default function Home() {
     console.log("sss");
     const value = e.target.value;
     const filtered = allSpots.filter((spot) =>
-      spot.title.toLowerCase().includes(value.toLowerCase())
+      spot.name.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredSpots(filtered);
     console.log(filtered);

@@ -25,17 +25,17 @@ async function AddSpotAction(prevFormState, formData) {
     };
 
   // εδώ θα προσθέσουμε upload + nominatim + save
-  // const uploadForm = new FormData();
-  // uploadForm.append("file", image);
+  const uploadForm = new FormData();
+  uploadForm.append("file", image);
 
-  // const res = await fetch("/api/upload", {
-  //   method: "POST",
-  //   body: uploadForm,
-  // });
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: uploadForm,
+  });
 
-  // const data = await res.json();
-  // const imageUrl = data.secure_url;
-  // console.log(imageUrl);
+  const uploadData = await res.json();
+  const imageUrl = uploadData.secure_url;
+  console.log(imageUrl);
 
   const query = `${name},${location}`;
   const response = await fetch(
@@ -43,12 +43,41 @@ async function AddSpotAction(prevFormState, formData) {
       query
     )}&format=jsonv2`
   );
-  const data = await response.json();
+  const locationData = await response.json();
+  if (locationData.length === 0) {
+    return {
+      errors: ["Location not found. Try a more specific name."],
+      values: { name, category, description, location },
+    };
+  }
+  const lat = parseFloat(locationData[0].lat)
+const lon = parseFloat(locationData[0].lon)
 
-  console.log(data);
+  const spotRes = await fetch("/api/spots", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name,
+      category,
+      description,
+      location,
+      imageUrl,
+      lat,
+      lon,
+    }),
+  });
+
+  if (!spotRes.ok) {
+    return {
+      errors: ["Failed to save spot"],
+      values: { name, category, description, location },
+    };
+  }
 
   return { errors: null };
+  return { errors: null };
 }
+
 export default function AddSpot() {
   const { activeModal, openModal, closeModal } = useModalStore();
   const [formState, formAction] = useActionState(AddSpotAction, {
