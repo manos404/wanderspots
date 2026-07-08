@@ -28,3 +28,13 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, spot })
 }
+
+export async function GET() {
+  const spots = await prisma.spot.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return NextResponse.json(spots);
+}

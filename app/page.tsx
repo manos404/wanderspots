@@ -4,9 +4,10 @@ import { Spot } from "./types/spot";
 import { mockSpots } from "./data";
 import Modal from "../components/Modal";
 import { LayoutGrid, Map as MapIcon, Search } from "lucide-react";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { GET } from "./api/spots/route";
 import dynamic from "next/dynamic";
+import { prisma } from "@/lib/prisma";
 
 const Map = dynamic(() => import("../components/Map"), {
   ssr: false,
@@ -17,6 +18,18 @@ export default function Home() {
   const [activeButton, setActiveButton] = useState("map");
   const [allSpots, setAllSpots] = useState(mockSpots);
   const [filteredSpots, setFilteredSpots] = useState(mockSpots);
+
+  useEffect(() => {
+    async function loadSpots() {
+      const res = await fetch("/api/spots");
+      const data = await res.json();
+
+      setAllSpots(data);
+      setFilteredSpots(data);
+    }
+
+    loadSpots();
+  }, []);
 
   const handleSearch = (e) => {
     console.log("sss");
