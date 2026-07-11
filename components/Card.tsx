@@ -15,6 +15,8 @@ export default function Card({ spot }: CardProps) {
           src={spot.imageUrl}
           alt={spot.name}
           fill
+           sizes="(max-width: 768px) 100vw, 33vw"
+
           className="object-cover hover:scale-105 transition-transform duration-300"
         />
       </div>
