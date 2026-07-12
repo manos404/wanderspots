@@ -11,13 +11,13 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
 model User {
   id       String @id @default(cuid())
   name     String
   email    String @unique
   password String
   spots    Spot[]
+  likes    Like[]
 }
 
 model Spot {
@@ -30,7 +30,18 @@ model Spot {
   imageUrl    String
   category    String
   createdAt   DateTime @default(now())
-  likes       Int      @default(0)
+  likesCount  Int      @default(0)
   authorId    String
   author      User     @relation(fields: [authorId], references: [id])
+  likes       Like[]
+}
+
+model Like {
+  id     String @id @default(cuid())
+  userId String
+  spotId String
+  user   User   @relation(fields: [userId], references: [id])
+  spot   Spot   @relation(fields: [spotId], references: [id])
+
+  @@unique([userId, spotId])
 }

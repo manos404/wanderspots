@@ -1,12 +1,33 @@
+"use client";
+
 import Image from "next/image";
-import { Spot } from "../../app/types/spot";
 import { Calendar, Heart, MapPin } from "lucide-react";
+import { SpotWithAuthor } from "@/app/types/spot";
+import { useState } from "react";
 
 interface CardProps {
-  spot: Spot;
+  spot: SpotWithAuthor;
 }
 
 export default function Card({ spot }: CardProps) {
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(spot.likesCount);
+
+  async function handleLike() {
+    const res = await fetch(`/api/spots/${spot.id}/like`, {
+      method: "POST",
+    });
+    const data = await res.json();
+
+    if (data.liked) {
+      setLiked(true);
+      setLikeCount((prev) => prev + 1);
+    } else {
+      setLiked(false);
+      setLikeCount((prev) => prev - 1);
+    }
+  }
+
   return (
     <div className="rounded-2xl overflow-hidden shadow-md bg-white hover:shadow-lg transition-all duration-300 cursor-pointer">
       {/* IMAGE */}
@@ -15,8 +36,7 @@ export default function Card({ spot }: CardProps) {
           src={spot.imageUrl}
           alt={spot.name}
           fill
-           sizes="(max-width: 768px) 100vw, 33vw"
-
+          sizes="(max-width: 768px) 100vw, 33vw"
           className="object-cover hover:scale-105 transition-transform duration-300"
         />
       </div>
@@ -46,7 +66,7 @@ export default function Card({ spot }: CardProps) {
           <div className="flex  items-center gap-2 ">
             {/* AVATAR */}
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
-              {spot.author.avatar}
+              {/* {spot.author.avatar} */}
             </div>
             {/* NAME + DATE */}
             <div className="flex flex-col">
@@ -58,9 +78,12 @@ export default function Card({ spot }: CardProps) {
               </span>
             </div>
           </div>
-          <div className="flex flex-row gap-2 hover:text-red-500 transition-colors ">
-            <Heart className="" />
-            <span>{spot.likes}</span>
+          <div
+            className="flex flex-row gap-2 hover:text-red-500 transition-colors "
+            onClick={handleLike}
+          >
+            <Heart className={liked ? "fill-red-500 stroke-red-500" : ""} />
+            <span>{likeCount}</span>
           </div>
         </div>
       </div>
