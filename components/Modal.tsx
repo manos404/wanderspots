@@ -3,6 +3,7 @@ import { useModalStore } from "@/app/store/useModalStore";
 import AuthForm from "./forms/AuthForm";
 import AddSpot from "./forms/AddSpot";
 import { Dialog, DialogContent } from "./ui/dialog";
+import SpotDetail from "./SpotDetail";
 
 export default function Modal() {
   const { activeModal, closeModal } = useModalStore();
@@ -12,13 +13,20 @@ export default function Modal() {
       open={
         activeModal === "login" ||
         activeModal === "signup" ||
-        activeModal === "addspot"
+        activeModal === "addSpot" ||
+        activeModal === "spotDetail"
       }
       onOpenChange={(open) => !open && closeModal()}
     >
-      <DialogContent className="p-0 m-auto w-100 pb-5   rounded-4xl text-white   ">
+      <DialogContent
+        className={`
+          p-0 m-auto rounded-4xl text-white
+          ${activeModal === "spotDetail" ? "!w-[700px] !max-w-[700px] " : ""}
+        `}
+      >
         {(activeModal === "login" || activeModal === "signup") && <AuthForm />}
-        {activeModal === "addspot" && <AddSpot />}
+        {activeModal === "addSpot" && <AddSpot />}
+        {activeModal === "spotDetail" && <SpotDetail />}
       </DialogContent>
     </Dialog>
   );

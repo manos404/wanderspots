@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Calendar, Heart, MapPin } from "lucide-react";
 import { SpotWithAuthor } from "@/app/types/spot";
 import { useState } from "react";
+import { useModalStore } from "@/app/store/useModalStore";
 
 interface CardProps {
   spot: SpotWithAuthor;
@@ -12,6 +13,7 @@ interface CardProps {
 export default function Card({ spot }: CardProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(spot.likesCount);
+  const { openModal } = useModalStore();
 
   async function handleLike() {
     const res = await fetch(`/api/spots/${spot.id}/like`, {
@@ -29,7 +31,12 @@ export default function Card({ spot }: CardProps) {
   }
 
   return (
-    <div className="rounded-2xl overflow-hidden shadow-md bg-white hover:shadow-lg transition-all duration-300 cursor-pointer">
+    <div
+      className="rounded-2xl overflow-hidden shadow-md bg-white hover:shadow-lg transition-all duration-300 cursor-pointer"
+      onClick={() => {
+        openModal("spotDetail", spot);
+       }}
+    >
       {/* IMAGE */}
       <div className="relative w-full h-64">
         <Image
