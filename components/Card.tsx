@@ -15,8 +15,9 @@ export default function Card({ spot }: CardProps) {
   const [likeCount, setLikeCount] = useState(spot.likesCount);
   const { openModal } = useModalStore();
 
-  async function handleLike() {
-    const res = await fetch(`/api/spots/${spot.id}/like`, {
+  async function handleLike(e) {
+    e.stopPropagation(); // Σταματάει το onClick του div
+      const res = await fetch(`/api/spots/${spot.id}/like`, {
       method: "POST",
     });
     const data = await res.json();
@@ -35,7 +36,7 @@ export default function Card({ spot }: CardProps) {
       className="rounded-2xl overflow-hidden shadow-md bg-white hover:shadow-lg transition-all duration-300 cursor-pointer"
       onClick={() => {
         openModal("spotDetail", spot);
-       }}
+      }}
     >
       {/* IMAGE */}
       <div className="relative w-full h-64">
@@ -87,7 +88,7 @@ export default function Card({ spot }: CardProps) {
           </div>
           <div
             className="flex flex-row gap-2 hover:text-red-500 transition-colors "
-            onClick={handleLike}
+            onClick={(e) => handleLike(e)}
           >
             <Heart className={liked ? "fill-red-500 stroke-red-500" : ""} />
             <span>{likeCount}</span>

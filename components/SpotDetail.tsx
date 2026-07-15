@@ -1,5 +1,5 @@
 import { useModalStore } from "@/app/store/useModalStore";
-import { Calendar, Heart, MapPin } from "lucide-react";
+import { Calendar, Heart, MapPin, User } from "lucide-react";
 import Image from "next/image";
 
 export default function SpotDetail() {
@@ -30,9 +30,12 @@ export default function SpotDetail() {
             className="flex flex-col border-2 rounded-lg  px-3 py-2 items-center gap-2 hover:text-red-500 transition-colors text-lg"
             // onClick={handleLike}
           >
-            <Heart className={"fill-red-500 stroke-red-500"} />
-            <span>{5}</span>
-          </div>s
+            <Heart
+              className={"fill-red-500 stroke-red-500"}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <span>{selectedSpot.likesCount}</span>
+          </div>
         </div>
         <span className="bg-blue-50 px-2 text-blue-700 rounded-2xl text-base p-1  ">
           {selectedSpot.category}
@@ -45,7 +48,8 @@ export default function SpotDetail() {
           </div>
           {/* NAME + DATE */}
           <div className="flex flex-col">
-            <span className="text-sm font-medium">
+            <span className="flex  row gap-1 items-baseline text-sm font-medium">
+              <User size={13} className="text-gray-500" />
               {selectedSpot.author.name}
             </span>
 
