@@ -6,9 +6,10 @@ export default function SpotDetail() {
   const { selectedSpot } = useModalStore();
   console.log(selectedSpot);
   if (!selectedSpot) return;
+
   return (
     <div className="w-full rounded-2xl  max-h-[90vh] overflow-y-auto   text-black">
-      <div className="relative w-full  h-100">
+      <div className="relative w-full h-100">
         <Image
           src={selectedSpot.imageUrl}
           alt={selectedSpot.name}

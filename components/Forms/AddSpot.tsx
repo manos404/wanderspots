@@ -90,7 +90,7 @@ export default function AddSpot() {
         <h1 className="text-2xl font-bold  ">Add Your Favorite Spot</h1>
       </div>
       <form action={formAction}>
-        <div className="mt-2 px-7 flex flex-col gap-2 text-black">
+        <div className="mt-2 px-7 pb-6 flex flex-col gap-2 text-black">
           <label htmlFor="name">Spot Name</label>
           <input
             type="name"

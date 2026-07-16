@@ -5,6 +5,8 @@ import plane from "../../public/flight.png";
 import { LogOut, Plus, User } from "lucide-react";
 import { useModalStore } from "@/app/store/useModalStore";
 import { signOut, useSession } from "next-auth/react";
+import Modal from "./Modal";
+import Link from "next/link";
 
 export default function Navbar() {
   const { openModal } = useModalStore();
@@ -12,6 +14,7 @@ export default function Navbar() {
 
   return (
     <div className="flex justify-between shadow-xl pt-5 pb-2">
+      {/* <Modal /> */}
       <div className="flex ml-30  row gap-5">
         <Image src={compass} alt="" className="w-12 h-12" />
         <div className="column text-center">
@@ -34,13 +37,15 @@ export default function Navbar() {
               <Plus />
               Add a spot
             </button>
-            <span className="flex gap-2 items-center  border-l border-gray-300 pl-4 ">
-              {/* <div className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center"> */}
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
-                <User size={15} />
-              </div>
-              {session.user?.name}
-            </span>
+            <Link href="/profile">
+              <span className="flex gap-2 items-center  border-l border-gray-300 pl-4 cursor-grab">
+                {/* <div className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center"> */}
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
+                  <User size={15} />
+                </div>
+                {session.user?.name}
+              </span>
+            </Link>
             <button onClick={() => signOut()}>
               <LogOut />
             </button>
