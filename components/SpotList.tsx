@@ -64,13 +64,12 @@ export default function SpotList({
           </div>
         </div>
         {activeButton === "map" && <Map spots={filteredSpots} />}
-        
-          <div className="grid grid-cols-3 gap-10">
-            {filteredSpots.map((spot) => (
-              <Card key={spot.id} spot={spot} />
-            ))}
-          </div>
-        
+
+        <div className="grid grid-cols-3 gap-10">
+          {filteredSpots.map((spot) => (
+            <Card key={spot.id} spot={spot} />
+          ))}
+        </div>
       </div>
     </>
   );

@@ -27,9 +27,10 @@ const customIcon = divIcon({
 export default function Map({ spots = [] }: MapProps) {
   return (
     <MapContainer
-      center={[40.015, -105.2705]}
+      center={[37.8165449, 20.8642323]}
       zoom={4}
       style={{ height: "500px", width: "100%" }}
+      className="rounded-2xl"
     >
       {spots.map((spot) => (
         <Marker
