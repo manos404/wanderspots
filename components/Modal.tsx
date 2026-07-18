@@ -1,7 +1,7 @@
 "use client";
 import { useModalStore } from "@/app/store/useModalStore";
 import AuthForm from "./forms/AuthForm";
-import AddSpot from "./forms/AddSpot";
+import SpotForm from "./forms/SpotForm";
 import { Dialog, DialogContent } from "./ui/dialog";
 import SpotDetail from "./SpotDetail";
 
@@ -25,7 +25,9 @@ export default function Modal() {
         `}
       >
         {(activeModal === "login" || activeModal === "signup") && <AuthForm />}
-        {activeModal === "addSpot" && <AddSpot />}
+        {activeModal === "addSpot" && (
+          <SpotForm onSuccess={() => closeModal()} />
+        )}
         {activeModal === "spotDetail" && <SpotDetail />}
       </DialogContent>
     </Dialog>

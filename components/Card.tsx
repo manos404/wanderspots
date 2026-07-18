@@ -1,23 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import { Calendar, Heart, MapPin } from "lucide-react";
+import { Calendar, Heart, MapPin, Pencil } from "lucide-react";
 import { SpotWithAuthor } from "@/app/types/spot";
 import { useState } from "react";
 import { useModalStore } from "@/app/store/useModalStore";
+import Modal from "./Modal";
 
 interface CardProps {
   spot: SpotWithAuthor;
+  editable?: boolean;
 }
 
-export default function Card({ spot }: CardProps) {
+export default function Card({ spot, editable = false }: CardProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(spot.likesCount);
-  const { openModal } = useModalStore();
+  const { openModal, selectedSpot } = useModalStore();
 
   async function handleLike(e) {
     e.stopPropagation(); // Σταματάει το onClick του div
-      const res = await fetch(`/api/spots/${spot.id}/like`, {
+    const res = await fetch(`/api/spots/${spot.id}/like`, {
       method: "POST",
     });
     const data = await res.json();
@@ -33,11 +35,34 @@ export default function Card({ spot }: CardProps) {
 
   return (
     <div
-      className="rounded-2xl overflow-hidden shadow-md bg-white hover:shadow-lg transition-all duration-300 cursor-pointer"
+      className="group relative rounded-2xl overflow-hidden shadow-md bg-white hover:shadow-lg transition-all duration-300 cursor-pointer"
       onClick={() => {
         openModal("spotDetail", spot);
       }}
     >
+      {editable && (
+        <button
+          className="
+      flex
+      flex-row
+      gap-1.5
+      absolute left-3 top-3 z-10
+      rounded-md bg-gray-600 text-white px-3 py-1
+      text-sm shadow
+      items-center
+      opacity-0
+      transition-opacity duration-200
+      group-hover:opacity-100
+    "
+          onClick={(e) => {
+            e.stopPropagation();
+            openModal("addSpot", spot);
+          }}
+        >
+          <Pencil size={13} />
+          Edit
+        </button>
+      )}
       {/* IMAGE */}
       <div className="relative w-full h-64">
         <Image

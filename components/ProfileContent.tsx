@@ -6,13 +6,14 @@ import { ArrowLeft, Filter, User } from "lucide-react";
 import { SpotWithAuthor } from "@/app/types/spot";
 import Link from "next/link";
 import SpotList from "./SpotList";
-import Map from "./Map";
 import Card from "./Card";
+import dynamic from "next/dynamic";
 
 type Props = {
   spots: SpotWithAuthor[];
   userName: string | null | undefined;
 };
+const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function ProfileContent({ spots, userName }: Props) {
   const [filter, setFilter] = useState("");
@@ -58,7 +59,9 @@ export default function ProfileContent({ spots, userName }: Props) {
                 ))}
               </select>
             </div>
-            <p>Showing {filteredSpots.length} of {spots.length} spots</p>
+            <p>
+              Showing {filteredSpots.length} of {spots.length} spots
+            </p>
           </div>
         </div>
         {/* <SpotList initialSpots={filteredSpots} /> */}
@@ -68,7 +71,7 @@ export default function ProfileContent({ spots, userName }: Props) {
       </div>
       <div className="grid grid-cols-3 gap-10 my-10 mx-30">
         {filteredSpots.map((spot) => (
-          <Card key={spot.id} spot={spot} />
+          <Card key={spot.id} spot={spot} editable />
         ))}
       </div>
     </>

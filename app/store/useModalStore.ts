@@ -5,7 +5,7 @@ type ModalType = 'login' | 'signup' | 'addSpot' | 'spotDetail' | null
 
 interface ModalStore {
     activeModal: ModalType
-    selectedSpot: SpotWithAuthor | null  
+    selectedSpot: SpotWithAuthor | null
     openModal: (type: ModalType, spot?: SpotWithAuthor | null) => void
     closeModal: () => void
 }
