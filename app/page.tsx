@@ -11,6 +11,6 @@ export default async function Home() {
     orderBy: { createdAt: "desc" },
     include: { author: true },
   });
-  console.log(spots);
+  // console.log(spots);
   return <SpotList initialSpots={spots} />;
 }

@@ -1,11 +1,13 @@
 "use client";
 import { useModalStore } from "@/app/store/useModalStore";
 import { hasMinLength, isNotEmpty } from "@/app/util/validation";
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 
 type SpotFormProps = {
   isEditing?: boolean;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 };
 
 async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
@@ -36,17 +38,23 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
     const uploadForm = new FormData();
     uploadForm.append("file", image);
 
-    const res = await fetch("/api/spots/upload", {
+    const res = await fetch("/api/upload", {
       method: "POST",
       body: uploadForm,
     });
 
     // const uploadData = await res.json();
+    if (!res.ok) {
+      throw new Error("Upload failed");
+    }
     const text = await res.text();
-    console.log(text);
+
+    console.log("UPLOAD RESPONSE:", text);
 
     const uploadData = JSON.parse(text);
     imageUrl = uploadData.secure_url;
+    // const uploadData = await res.json();
+    // imageUrl = uploadData.secure_url;
   }
 
   const query = `${name},${location}`;
@@ -96,6 +104,7 @@ export default function SpotForm({
   isEditing = false,
   onSuccess,
 }: SpotFormProps) {
+  const router = useRouter();
   const { selectedSpot } = useModalStore();
   const [formState, formAction] = useActionState(
     (prevState, formData) =>
@@ -104,6 +113,16 @@ export default function SpotForm({
       errors: null,
     }
   );
+  async function handleDelete() {
+    if (!selectedSpot) return;
+
+    await fetch(`/api/spots/${selectedSpot.id}`, {
+      method: "DELETE",
+    });
+
+    onSuccess?.();
+    router.refresh();
+  }
   return (
     <>
       <div className="p-3 pl-7 pb-5 bg-gradient-to-br from-blue-600 rounded-t-lg to-purple-600">
@@ -173,6 +192,16 @@ export default function SpotForm({
                 <li key={error}>{error}</li>
               ))}
             </ul>
+          )}
+          {selectedSpot && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="mt-2 flex flex-row gap-1 align-center text-red-500 hover:text-red-600  "
+            >
+              <Trash2 size={16} />
+              Delete Spot
+            </button>
           )}
           <button className="mt-4 w-full h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl text-white hover:from-blue-700 hover:to-purple-700 transition-all">
             {selectedSpot ? "Save Changes" : "Add Spot"}

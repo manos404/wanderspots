@@ -107,7 +107,7 @@ export default function Card({ spot, editable = false }: CardProps) {
 
               <span className="flex items-center text-xs gap-1 text-gray-500">
                 <Calendar size={12} />
-                {new Date(spot.createdAt).toLocaleDateString()}
+                {new Date(spot.createdAt).toLocaleDateString("el-GR")}
               </span>
             </div>
           </div>

@@ -4,9 +4,11 @@ import AuthForm from "./forms/AuthForm";
 import SpotForm from "./forms/SpotForm";
 import { Dialog, DialogContent } from "./ui/dialog";
 import SpotDetail from "./SpotDetail";
+import { useRouter } from "next/navigation";
 
 export default function Modal() {
   const { activeModal, closeModal } = useModalStore();
+  const router = useRouter();
   return (
     <Dialog
       // open={true}
@@ -26,7 +28,12 @@ export default function Modal() {
       >
         {(activeModal === "login" || activeModal === "signup") && <AuthForm />}
         {activeModal === "addSpot" && (
-          <SpotForm onSuccess={() => closeModal()} />
+          <SpotForm
+            onSuccess={() => {
+              closeModal();
+              router.refresh();
+            }}
+          />
         )}
         {activeModal === "spotDetail" && <SpotDetail />}
       </DialogContent>
