@@ -21,8 +21,8 @@ export default function Modal() {
       onOpenChange={(open) => !open && closeModal()}
     >
       <DialogContent
-        className={`
-          p-0 m-auto rounded-4xl text-white
+        className={`!w-[600px] !max-w-[600px] "
+         p-0 m-auto rounded-4xl text-white
           ${activeModal === "spotDetail" ? "!w-[700px] !max-w-[700px] " : ""}
         `}
       >

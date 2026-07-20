@@ -3,7 +3,7 @@ import { useModalStore } from "@/app/store/useModalStore";
 import { hasMinLength, isNotEmpty } from "@/app/util/validation";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 type SpotFormProps = {
   isEditing?: boolean;
@@ -106,6 +106,7 @@ export default function SpotForm({
 }: SpotFormProps) {
   const router = useRouter();
   const { selectedSpot } = useModalStore();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [formState, formAction] = useActionState(
     (prevState, formData) =>
       AddSpotAction(prevState, formData, selectedSpot, onSuccess),
@@ -193,15 +194,37 @@ export default function SpotForm({
               ))}
             </ul>
           )}
-          {selectedSpot && (
+          {selectedSpot && !showDeleteConfirm && (
             <button
               type="button"
-              onClick={handleDelete}
+              onClick={() => setShowDeleteConfirm(true)}
               className="mt-2 flex flex-row gap-1 align-center text-red-500 hover:text-red-600  "
             >
               <Trash2 size={16} />
               Delete Spot
             </button>
+          )}
+          {showDeleteConfirm && (
+            <div className="mt-3 flex row  justify-between items-baseline gap-1 p-3 rounded-xl bg-red-100 text-red-600">
+              <p className="mb-3">Are you sure? This cannot be undone.</p>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 text-black px-3 h-10 rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="flex-1 h-10  text-red-600  rounded-xl"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           )}
           <button className="mt-4 w-full h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl text-white hover:from-blue-700 hover:to-purple-700 transition-all">
             {selectedSpot ? "Save Changes" : "Add Spot"}

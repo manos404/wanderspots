@@ -3,46 +3,60 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 export async function PUT(
-    req: Request,
-    { params }: { params: Promise<{ id: string }> }) {
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }) {
 
-    const session = await auth();
+  const session = await auth();
 
-    if (!session?.user?.id) {
-        return NextResponse.json(
-            { error: "Unauthorized" },
-            { status: 401 }
-        );
-    }
+  if (!session?.user?.id) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
 
-    const { id } = await params;
-      console.log("PUT SPOT ID:", id);
-    const {
-        name,
-        category,
-        description,
-        location,
-        imageUrl,
-        lat,
-        lon,
-    } = await req.json();
+  const { id } = await params;
+  const existingSpot = await prisma.spot.findUnique({
+    where: { id },
+  });
+  if (!existingSpot) {
+    return NextResponse.json(
+      { error: "Spot not found" },
+      { status: 404 }
+    );
+  }
+  if (existingSpot.authorId !== session.user.id) {
+    return NextResponse.json(
+      { error: "Forbidden" },
+      { status: 403 }
+    );
+  }
+  const {
+    name,
+    category,
+    description,
+    location,
+    imageUrl,
+    lat,
+    lon,
+  } = await req.json();
 
-    const spot = await prisma.spot.update({
-        where: {
-            id,
-        },
-        data: {
-            name,
-            category,
-            description,
-            location,
-            imageUrl,
-            latitude: lat,
-            longitude: lon,
-        },
-    });
+  const spot = await prisma.spot.update({
+    where: {
+      id,
+    },
+    data: {
+      name,
+      category,
+      description,
+      location,
+      imageUrl,
+      latitude: lat,
+      longitude: lon,
+    },
+  });
 
-    return NextResponse.json({ success: true, spot });
+  return NextResponse.json({ success: true, spot });
 }
 
 export async function DELETE(
@@ -59,7 +73,21 @@ export async function DELETE(
   }
 
   const { id } = await params;
-
+  const existingSpot = await prisma.spot.findUnique({
+    where: { id },
+  });
+  if (!existingSpot) {
+    return NextResponse.json(
+      { error: "Spot not found" },
+      { status: 404 }
+    );
+  }
+  if (existingSpot.authorId !== session.user.id) {
+    return NextResponse.json(
+      { error: "Forbidden" },
+      { status: 403 }
+    );
+  }
   await prisma.spot.delete({
     where: {
       id,

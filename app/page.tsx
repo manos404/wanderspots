@@ -1,16 +1,18 @@
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
 import SpotList from "../components/SpotList";
-import { Spot, User } from "@/lib/generated/prisma/client";
 import { SpotWithAuthor } from "@/app/types/spot";
 
-// export type SpotWithAuthor = Spot & {
-//   author: User;
-// };
 export default async function Home() {
+  const session = await auth();
   const spots: SpotWithAuthor[] = await prisma.spot.findMany({
     orderBy: { createdAt: "desc" },
-    include: { author: true },
+    include: { author: true, likes: true },
   });
-  // console.log(spots);
-  return <SpotList initialSpots={spots} />;
+  const spotsWithLikes = spots.map((spot) => ({
+    ...spot,
+    likedByUser: spot.likes.some((like) => like.userId === session?.user?.id),
+  }));
+  // console.log(spotsWithLikes[0]);
+  return <SpotList initialSpots={spotsWithLikes} />;
 }

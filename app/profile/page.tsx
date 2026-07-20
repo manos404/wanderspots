@@ -17,8 +17,15 @@ export default async function Profile() {
     },
     include: {
       author: true,
+      likes: true,
     },
   });
+  const spotsWithLikes = spots.map((spot) => ({
+    ...spot,
+    likedByUser: spot.likes.some((like) => like.userId === session?.user?.id),
+  }));
   //   console.log(spots);
-  return <ProfileContent spots={spots} userName={session.user?.name} />;
+  return (
+    <ProfileContent spots={spotsWithLikes} userName={session.user?.name} />
+  );
 }
