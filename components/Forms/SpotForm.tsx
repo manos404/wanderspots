@@ -32,6 +32,21 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
     };
 
   // εδώ θα προσθέσουμε upload + nominatim + save
+  const query = `${name},${location}`;
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+      query
+    )}&format=jsonv2`
+  );
+  const locationData = await response.json();
+  if (locationData.length === 0) {
+    return {
+      errors: ["Location not found. Try a more specific name."],
+      values: { name, category, description, location },
+    };
+  }
+  const lat = parseFloat(locationData[0].lat);
+  const lon = parseFloat(locationData[0].lon);
   let imageUrl = selectedSpot?.imageUrl;
 
   if (image && image.size > 0) {
@@ -56,22 +71,6 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
     // const uploadData = await res.json();
     // imageUrl = uploadData.secure_url;
   }
-
-  const query = `${name},${location}`;
-  const response = await fetch(
-    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-      query
-    )}&format=jsonv2`
-  );
-  const locationData = await response.json();
-  if (locationData.length === 0) {
-    return {
-      errors: ["Location not found. Try a more specific name."],
-      values: { name, category, description, location },
-    };
-  }
-  const lat = parseFloat(locationData[0].lat);
-  const lon = parseFloat(locationData[0].lon);
 
   const spotRes = await fetch(
     selectedSpot ? `/api/spots/${selectedSpot.id}` : "/api/spots",
