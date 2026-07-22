@@ -1,15 +1,19 @@
 "use client";
 import { useModalStore } from "@/app/store/useModalStore";
+import { SpotWithAuthor } from "@/app/types/spot";
 import { hasMinLength, isNotEmpty } from "@/app/util/validation";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 type SpotFormProps = {
   isEditing?: boolean;
   onSuccess?: () => void;
 };
-
+type SubmitButtonProps = {
+  selectedSpot: SpotWithAuthor | null;
+};
 async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
   const name = formData.get("name");
   const category = formData.get("category");
@@ -18,93 +22,113 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
   const image = formData.get("image") as File;
   const errors = [];
 
-  if (!name) errors.push("Name is required");
-  if (!category) errors.push("Category is required");
-  if (!description) errors.push("Description is required");
-  if (!location) errors.push("Location is required");
-  if (!selectedSpot && (!image || image.size === 0)) {
-    errors.push("Image is required");
-  }
-  if (errors.length > 0)
-    return {
-      errors,
-      values: { name, category, description, location },
-    };
-
-  // εδώ θα προσθέσουμε upload + nominatim + save
-  const query = `${name},${location}`;
-  const response = await fetch(
-    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-      query
-    )}&format=jsonv2`
-  );
-  const locationData = await response.json();
-  if (locationData.length === 0) {
-    return {
-      errors: ["Location not found. Try a more specific name."],
-      values: { name, category, description, location },
-    };
-  }
-  const lat = parseFloat(locationData[0].lat);
-  const lon = parseFloat(locationData[0].lon);
-  let imageUrl = selectedSpot?.imageUrl;
-
-  if (image && image.size > 0) {
-    const uploadForm = new FormData();
-    uploadForm.append("file", image);
-
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: uploadForm,
-    });
-
-    // const uploadData = await res.json();
-    if (!res.ok) {
-      throw new Error("Upload failed");
+  try {
+    if (!name) errors.push("Name is required");
+    if (!category) errors.push("Category is required");
+    if (!description) errors.push("Description is required");
+    if (!location) errors.push("Location is required");
+    if (!selectedSpot && (!image || image.size === 0)) {
+      errors.push("Image is required");
     }
-    const text = await res.text();
+    if (errors.length > 0)
+      return {
+        errors,
+        values: { name, category, description, location },
+      };
 
-    console.log("UPLOAD RESPONSE:", text);
+    const query = `${name},${location}`;
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+        query
+      )}&format=jsonv2`
+    );
+    const locationData = await response.json();
+    if (locationData.length === 0) {
+      return {
+        errors: ["Location not found. Try a more specific name."],
+        values: { name, category, description, location },
+      };
+    }
+    const lat = parseFloat(locationData[0].lat);
+    const lon = parseFloat(locationData[0].lon);
+    let imageUrl = selectedSpot?.imageUrl;
 
-    const uploadData = JSON.parse(text);
-    imageUrl = uploadData.secure_url;
-    // const uploadData = await res.json();
-    // imageUrl = uploadData.secure_url;
-  }
+    if (image && image.size > 0) {
+      const uploadForm = new FormData();
+      uploadForm.append("file", image);
 
-  const spotRes = await fetch(
-    selectedSpot ? `/api/spots/${selectedSpot.id}` : "/api/spots",
-    {
-      method: selectedSpot ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadForm,
+      });
+
+      if (!res.ok) {
+        return {
+          errors: ["Image upload failed"],
+          values: { name, category, description, location },
+        };
+      }
+      const uploadData = await res.json();
+      imageUrl = uploadData.secure_url;
+    }
+    const spotRes = await fetch(
+      selectedSpot ? `/api/spots/${selectedSpot.id}` : "/api/spots",
+      {
+        method: selectedSpot ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          category,
+          description,
+          location,
+          imageUrl,
+          lat,
+          lon,
+        }),
+      }
+    );
+
+    if (!spotRes.ok) {
+      return {
+        errors: ["Failed to save spot"],
+        values: { name, category, description, location },
+      };
+    }
+    onSuccess?.();
+    return { errors: null };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      errors: ["Something went wrong. Try again."],
+      values: {
         name,
         category,
         description,
         location,
-        imageUrl,
-        lat,
-        lon,
-      }),
-    }
-  );
-
-  if (!spotRes.ok) {
-    return {
-      errors: ["Failed to save spot"],
-      values: { name, category, description, location },
+      },
     };
   }
-  onSuccess?.();
-  return { errors: null };
 }
+function SubmitButton({ selectedSpot }: SubmitButtonProps) {
+  const { pending } = useFormStatus();
 
+  return (
+    <button
+      disabled={pending}
+      className="mt-4 w-full h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl text-white disabled:opacity-50"
+    >
+      {pending ? "Saving..." : selectedSpot ? "Save Changes" : "Add Spot"}
+    </button>
+  );
+}
 export default function SpotForm({
   isEditing = false,
   onSuccess,
 }: SpotFormProps) {
   const router = useRouter();
   const { selectedSpot } = useModalStore();
+  const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [formState, formAction] = useActionState(
     (prevState, formData) =>
@@ -113,16 +137,22 @@ export default function SpotForm({
       errors: null,
     }
   );
+
   async function handleDelete() {
     if (!selectedSpot) return;
+
+    setDeleting(true);
 
     await fetch(`/api/spots/${selectedSpot.id}`, {
       method: "DELETE",
     });
 
+    setDeleting(false);
+
     onSuccess?.();
     router.refresh();
   }
+
   return (
     <>
       <div className="p-3 pl-7 pb-5 bg-gradient-to-br from-blue-600 rounded-t-lg to-purple-600">
@@ -132,6 +162,7 @@ export default function SpotForm({
         </h1>
       </div>
       <form action={formAction}>
+        {" "}
         <div className="mt-2 px-7 pb-6 flex flex-col gap-2 text-black">
           <label htmlFor="name">Spot Name</label>
           <input
@@ -162,7 +193,6 @@ export default function SpotForm({
           </select>
           <label htmlFor="description">Description</label>
           <textarea
-            // type="description"
             name="description"
             rows={4}
             placeholder="What makes this spot special?"
@@ -217,17 +247,16 @@ export default function SpotForm({
                 </button>
                 <button
                   type="button"
+                  disabled={deleting}
                   onClick={handleDelete}
-                  className="flex-1 h-10  text-red-600  rounded-xl"
+                  className="flex-1 h-10 text-red-600 rounded-xl disabled:opacity-50"
                 >
-                  Delete
+                  {deleting ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>
           )}
-          <button className="mt-4 w-full h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl text-white hover:from-blue-700 hover:to-purple-700 transition-all">
-            {selectedSpot ? "Save Changes" : "Add Spot"}
-          </button>
+          <SubmitButton selectedSpot={selectedSpot} />
         </div>
       </form>
     </>

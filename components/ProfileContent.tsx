@@ -17,7 +17,8 @@ const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function ProfileContent({ spots, userName }: Props) {
   const [filter, setFilter] = useState("");
-
+  
+ 
   const filteredSpots = filter
     ? spots.filter((spot) => spot.location === filter)
     : spots;
@@ -67,7 +68,7 @@ export default function ProfileContent({ spots, userName }: Props) {
         {/* <SpotList initialSpots={filteredSpots} /> */}
       </div>
       <div className="mx-30 mt-10 rounded-2xl shadow-[-1px_10px_15px_rgba(0,0,0,0.15)]">
-        <Map spots={filteredSpots} />
+        {filteredSpots.length && <Map spots={filteredSpots} />}
       </div>
       <div className="grid grid-cols-3 gap-10 my-10 mx-30">
         {filteredSpots.map((spot) => (

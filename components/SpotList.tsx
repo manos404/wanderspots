@@ -17,13 +17,19 @@ export default function SpotList({
   const [filteredSpots, setFilteredSpots] = useState(initialSpots);
 
   const handleSearch = (e) => {
-    const value = e.target.value;
-    const filtered = initialSpots.filter((spot) =>
-      spot.name.toLowerCase().includes(value.toLowerCase())
+    const value = e.target.value.toLowerCase();
+
+    const filtered = initialSpots.filter(
+      (spot) =>
+        spot.name.toLowerCase().includes(value) ||
+        spot.location.toLowerCase().includes(value) ||
+        spot.category.toLowerCase().includes(value) ||
+        spot.description.toLowerCase().includes(value)||
+        spot.author.name.toLowerCase().includes(value)
     );
+
     setFilteredSpots(filtered);
   };
-
   return (
     <>
       <Modal />
@@ -57,7 +63,7 @@ export default function SpotList({
             />
             <input
               type="text"
-              placeholder="Search city or location..."
+              placeholder="Search spots, cities, categories, users..."
               className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 outline-none focus:border-2 focus:border-blue-500"
               onChange={handleSearch}
             />

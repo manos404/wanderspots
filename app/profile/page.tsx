@@ -2,11 +2,14 @@ import { auth } from "@/auth";
 import { SpotWithAuthor } from "../types/spot";
 import { prisma } from "@/lib/prisma";
 import ProfileContent from "@/components/ProfileContent";
+import { SignInPrompt } from "@/components/SignInPrompt";
 
 export default async function Profile() {
   const session = await auth();
 
-  if (!session) return null;
+  if (!session) {
+    return <SignInPrompt />;
+  }
 
   const spots: SpotWithAuthor[] = await prisma.spot.findMany({
     where: {
