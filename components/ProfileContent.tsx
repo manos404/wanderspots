@@ -5,8 +5,7 @@ import { ArrowLeft, Filter, User } from "lucide-react";
 // import { useState } from "react";
 import { SpotWithAuthor } from "@/app/types/spot";
 import Link from "next/link";
-import SpotList from "./SpotList";
-import Card from "./Card";
+ import Card from "./Card";
 import dynamic from "next/dynamic";
 
 type Props = {

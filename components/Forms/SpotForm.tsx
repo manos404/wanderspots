@@ -40,9 +40,10 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
         query
-      )}&format=jsonv2`
+      )}&format=jsonv2&addressdetails=1`
     );
     const locationData = await response.json();
+    console.log(locationData);
     if (locationData.length === 0) {
       return {
         errors: ["Location not found. Try a more specific name."],
@@ -140,15 +141,11 @@ export default function SpotForm({
 
   async function handleDelete() {
     if (!selectedSpot) return;
-
     setDeleting(true);
-
     await fetch(`/api/spots/${selectedSpot.id}`, {
       method: "DELETE",
     });
-
     setDeleting(false);
-
     onSuccess?.();
     router.refresh();
   }
@@ -157,12 +154,10 @@ export default function SpotForm({
     <>
       <div className="p-3 pl-7 pb-5 bg-gradient-to-br from-blue-600 rounded-t-lg to-purple-600">
         <h1 className="text-2xl font-bold  ">
-          {" "}
           {selectedSpot ? "Edit Spot" : "Add Your Favorite Spot"}
         </h1>
       </div>
       <form action={formAction}>
-        {" "}
         <div className="mt-2 px-7 pb-6 flex flex-col gap-2 text-black">
           <label htmlFor="name">Spot Name</label>
           <input

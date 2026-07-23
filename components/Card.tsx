@@ -14,8 +14,6 @@ interface CardProps {
 
 export default function Card({ spot, editable = false }: CardProps) {
   const [liked, setLiked] = useState(spot.likedByUser ?? false);
-  console.log("CARD LIKE:", spot.name, spot.likedByUser);
-  console.log("object");
   const [likeCount, setLikeCount] = useState(spot.likesCount);
   const { openModal, selectedSpot } = useModalStore();
 
