@@ -6,6 +6,7 @@ import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { toast } from "sonner";
 
 type SpotFormProps = {
   isEditing?: boolean;
@@ -96,6 +97,11 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
       };
     }
     onSuccess?.();
+    if (selectedSpot) {
+      toast.success("Spot updated successfully! ✨");
+    } else {
+      toast.success("Your spot has been added! 🎉");
+    }
     return { errors: null };
   } catch (error) {
     console.error(error);
@@ -148,6 +154,7 @@ export default function SpotForm({
     setDeleting(false);
     onSuccess?.();
     router.refresh();
+    toast.success("Spot deleted successfully! 🗑️");
   }
 
   return (

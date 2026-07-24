@@ -1,8 +1,11 @@
+"use client";
 import { hasMinLength, isEmail, isNotEmpty } from "@/app/util/validation";
 import { Lock, Mail, User, X } from "lucide-react";
 import { useActionState } from "react";
 import { useModalStore } from "@/app/store/useModalStore";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
+import { toast } from "sonner";
+import { auth } from "@/auth";
 
 export default function AuthForm() {
   const { activeModal, openModal, closeModal } = useModalStore();
@@ -29,9 +32,17 @@ export default function AuthForm() {
       redirect: false,
     });
     if (result?.error) {
-      return { errors: ["Invalid eamil or password"] };
+      return { errors: ["Invalid email or password"] };
     }
+    const session = await getSession();
     closeModal();
+    toast.success(`Welcome back, ${session?.user?.name}! 👋`, {
+      style: {
+        background: "linear-gradient(to right, #2563eb, #9333ea)",
+        color: "white",
+        border: "none",
+      },
+    });
     return { errors: null };
   }
 
@@ -71,6 +82,7 @@ export default function AuthForm() {
       redirect: false,
     });
     closeModal();
+    toast.success(`Welcome to WanderSpots, ${name}! 👋`);
     return { errors: null };
   }
 
