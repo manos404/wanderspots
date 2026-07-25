@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
 model User {
   id       String @id @default(cuid())
   name     String
@@ -21,19 +22,22 @@ model User {
 }
 
 model Spot {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  location    String
-  latitude    Float
-  longitude   Float
-  imageUrl    String
-  category    String
-  createdAt   DateTime @default(now())
-  likesCount  Int      @default(0)
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id])
-  likes       Like[]
+  id             String   @id @default(cuid())
+  name           String
+  description    String
+  city           String
+  country        String
+  searchLocation String
+  latitude       Float
+  longitude      Float
+  imageUrl       String
+  imageId        String
+  category       String
+  createdAt      DateTime @default(now())
+  likesCount     Int      @default(0)
+  authorId       String
+  author         User     @relation(fields: [authorId], references: [id])
+  likes          Like[]
 }
 
 model Like {

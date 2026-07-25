@@ -19,7 +19,8 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
   const name = formData.get("name");
   const category = formData.get("category");
   const description = formData.get("description");
-  const location = formData.get("location");
+  const city = formData.get("city");
+  const country = formData.get("country");
   const image = formData.get("image") as File;
   const errors = [];
 
@@ -27,33 +28,51 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
     if (!name) errors.push("Name is required");
     if (!category) errors.push("Category is required");
     if (!description) errors.push("Description is required");
-    if (!location) errors.push("Location is required");
+    if (!city) errors.push("City is required");
+    if (!country) errors.push("Country is required");
     if (!selectedSpot && (!image || image.size === 0)) {
       errors.push("Image is required");
     }
     if (errors.length > 0)
       return {
         errors,
-        values: { name, category, description, location },
+        values: { name, category, description, city, country },
       };
 
-    const query = `${name},${location}`;
+    const query = `${name}, ${city}, ${country}`;
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
         query
       )}&format=jsonv2&addressdetails=1`
     );
     const locationData = await response.json();
+
     console.log(locationData);
+
     if (locationData.length === 0) {
       return {
         errors: ["Location not found. Try a more specific name."],
-        values: { name, category, description, location },
+        values: { name, category, description, city, country },
       };
     }
-    const lat = parseFloat(locationData[0].lat);
-    const lon = parseFloat(locationData[0].lon);
+
+    const address = locationData[0].address;
+
+    const searchLocation = [
+      address.city,
+      address.town,
+      address.village,
+      address.municipality,
+      address.county,
+      address.state,
+      address.country,
+    ]
+      .filter(Boolean)
+      .join(", ");
+    const latitude = parseFloat(locationData[0].lat);
+    const longitude = parseFloat(locationData[0].lon);
     let imageUrl = selectedSpot?.imageUrl;
+    let imageId = selectedSpot?.imageId;
 
     if (image && image.size > 0) {
       const uploadForm = new FormData();
@@ -67,11 +86,12 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
       if (!res.ok) {
         return {
           errors: ["Image upload failed"],
-          values: { name, category, description, location },
+          values: { name, category, description, city, country },
         };
       }
       const uploadData = await res.json();
       imageUrl = uploadData.secure_url;
+      imageId = uploadData.public_id;
     }
     const spotRes = await fetch(
       selectedSpot ? `/api/spots/${selectedSpot.id}` : "/api/spots",
@@ -82,10 +102,13 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
           name,
           category,
           description,
-          location,
+          city,
+          country,
+          searchLocation,
           imageUrl,
-          lat,
-          lon,
+          imageId,
+          latitude,
+          longitude,
         }),
       }
     );
@@ -93,7 +116,7 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
     if (!spotRes.ok) {
       return {
         errors: ["Failed to save spot"],
-        values: { name, category, description, location },
+        values: { name, category, description, city, country },
       };
     }
     onSuccess?.();
@@ -108,12 +131,7 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
 
     return {
       errors: ["Something went wrong. Try again."],
-      values: {
-        name,
-        category,
-        description,
-        location,
-      },
+      values: { name, category, description, city, country },
     };
   }
 }
@@ -203,12 +221,20 @@ export default function SpotForm({
             }
             className="w-full mt-2 resize-y   rounded-xl border border-gray-300 pl-2 pt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <label htmlFor="location">Location</label>
+          <label htmlFor="city">City</label>
           <input
             type="text"
-            name="location"
+            name="city"
+            placeholder="e.g., Portland"
+            defaultValue={formState.values?.city ?? selectedSpot?.city}
+            className=" h-10 mt-2  rounded-xl border border-gray-300 pl-2  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <label htmlFor="country">Country</label>
+          <input
+            type="text"
+            name="country"
             placeholder="e.g., Portland, Oregon"
-            defaultValue={formState.values?.location ?? selectedSpot?.location}
+            defaultValue={formState.values?.country ?? selectedSpot?.country}
             className=" h-10 mt-2  rounded-xl border border-gray-300 pl-2  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <label htmlFor="image">Photo</label>

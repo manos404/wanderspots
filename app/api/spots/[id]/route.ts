@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
+import cloudinary from "@/lib/cloudinary";
 
 export async function PUT(
   req: Request,
@@ -35,10 +36,13 @@ export async function PUT(
     name,
     category,
     description,
-    location,
+    city,
+    country,
+    searchLocation,
     imageUrl,
-    lat,
-    lon,
+    imageId,
+    latitude,
+    longitude,
   } = await req.json();
 
   const spot = await prisma.spot.update({
@@ -49,10 +53,13 @@ export async function PUT(
       name,
       category,
       description,
-      location,
+      city,
+      country,
+      searchLocation,
       imageUrl,
-      latitude: lat,
-      longitude: lon,
+      imageId,
+      latitude,
+      longitude,
     },
   });
 
@@ -88,6 +95,10 @@ export async function DELETE(
       { status: 403 }
     );
   }
+  if (existingSpot.imageId) {
+    await cloudinary.uploader.destroy(existingSpot.imageId);
+  }
+
   await prisma.spot.delete({
     where: {
       id,

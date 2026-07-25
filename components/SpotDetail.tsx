@@ -24,7 +24,7 @@ export default function SpotDetail() {
             <h1 className="text-2xl  ">{selectedSpot.name}</h1>
             <p className="text-lg text-gray-500 flex items-center gap-1 mt-1">
               <MapPin size={20} />
-              {selectedSpot.location}
+              {selectedSpot.city + ", " + selectedSpot.country}
             </p>
           </div>
           <div

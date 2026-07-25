@@ -43,7 +43,9 @@ export default function SpotList({
       const matchesSearch =
         search === "" ||
         spot.name.toLowerCase().includes(search) ||
-        spot.location.toLowerCase().includes(search) ||
+        spot.city.toLowerCase().includes(search) ||
+        spot.country.toLowerCase().includes(search) ||
+        spot.searchLocation.toLowerCase().includes(search) ||
         spot.category.toLowerCase().includes(search) ||
         spot.description.toLowerCase().includes(search) ||
         spot.author.name.toLowerCase().includes(search);

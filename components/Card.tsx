@@ -88,7 +88,7 @@ export default function Card({ spot, editable = false }: CardProps) {
         {/* LOCATION */}
         <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
           <MapPin size={16} />
-          {spot.location}
+          {spot.city + ", " + spot.country}
         </p>
 
         {/* DESCRIPTION */}
