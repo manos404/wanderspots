@@ -176,6 +176,7 @@ export default function SpotForm({
     if (!position) return;
 
     async function reverseGeocode() {
+      if (!position) return;
       const res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?lat=${position.lat}&lon=${position.lng}&format=jsonv2&addressdetails=1`
       );
