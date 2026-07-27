@@ -17,7 +17,7 @@ export default function Card({ spot, editable = false }: CardProps) {
   const [likeCount, setLikeCount] = useState(spot.likesCount);
   const { openModal, selectedSpot } = useModalStore();
 
-  async function handleLike(e: React.MouseEvent<HTMLButtonElement>) {
+async function handleLike(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation(); // Σταματάει το onClick του div
     const res = await fetch(`/api/spots/${spot.id}/like`, {
       method: "POST",
