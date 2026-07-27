@@ -7,13 +7,19 @@ import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { auth } from "@/auth";
 
+type AuthState = {
+  errors: string[] | null;
+};
 export default function AuthForm() {
   const { activeModal, openModal, closeModal } = useModalStore();
   // let activeModal === 'signup' = false;
 
-  async function SigninAction(prevFormState, formData) {
-    const email = formData.get("email");
-    const password = formData.get("password");
+  async function SigninAction(
+    prevFormState: AuthState,
+    formData: FormData
+  ): Promise<AuthState> {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
     const errors = []; //
     if (!isEmail(email)) {
       errors.push("Invalid email address.");
@@ -46,10 +52,13 @@ export default function AuthForm() {
     return { errors: null };
   }
 
-  async function SignupAction(prevFormState, formData) {
-    const name = formData.get("name");
-    const email = formData.get("email");
-    const password = formData.get("password");
+  async function SignupAction(
+    prevFormState: AuthState,
+    formData: FormData
+  ): Promise<AuthState> {
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
     const errors = [];
     if (!isNotEmpty(name)) {

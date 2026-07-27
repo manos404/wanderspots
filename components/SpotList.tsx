@@ -56,7 +56,7 @@ export default function SpotList({
       return matchesSearch && matchesCategory;
     });
   }, [initialSpots, searchValue, selectedCategory]);
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
   return (

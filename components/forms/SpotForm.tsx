@@ -10,6 +10,17 @@ import { toast } from "sonner";
 import dynamic from "next/dynamic";
 
 const Map = dynamic(() => import("../Map"), { ssr: false });
+type SpotFormState = {
+  errors: string[] | null;
+  values?: {
+    name?: string;
+    category?: string;
+    description?: string;
+    city?: string;
+    country?: string;
+  };
+};
+
 type SpotFormProps = {
   isEditing?: boolean;
   onSuccess?: () => void;
@@ -17,7 +28,12 @@ type SpotFormProps = {
 type SubmitButtonProps = {
   selectedSpot: SpotWithAuthor | null;
 };
-async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
+async function AddSpotAction(
+  prevFormState: SpotFormState,
+  formData: FormData,
+  selectedSpot: SpotWithAuthor | null,
+  onSuccess?: () => void
+): Promise<SpotFormState> {
   const name = formData.get("name");
   const category = formData.get("category");
   const description = formData.get("description");
@@ -40,7 +56,13 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
     if (errors.length > 0)
       return {
         errors,
-        values: { name, category, description, city, country },
+        values: {
+          name: name?.toString() ?? "",
+          category: category?.toString() ?? "",
+          description: description?.toString() ?? "",
+          city: city?.toString() ?? "",
+          country: country?.toString() ?? "",
+        },
       };
 
     let latitude: number, longitude: number, searchLocation: string;
@@ -61,7 +83,13 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
       if (locationData.length === 0) {
         return {
           errors: ["Location not found. Try a more specific name."],
-          values: { name, category, description, city, country },
+          values: {
+            name: name?.toString() ?? "",
+            category: category?.toString() ?? "",
+            description: description?.toString() ?? "",
+            city: city?.toString() ?? "",
+            country: country?.toString() ?? "",
+          },
         };
       }
 
@@ -97,7 +125,13 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
       if (!res.ok) {
         return {
           errors: ["Image upload failed"],
-          values: { name, category, description, city, country },
+          values: {
+            name: name?.toString() ?? "",
+            category: category?.toString() ?? "",
+            description: description?.toString() ?? "",
+            city: city?.toString() ?? "",
+            country: country?.toString() ?? "",
+          },
         };
       }
       const uploadData = await res.json();
@@ -127,7 +161,13 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
     if (!spotRes.ok) {
       return {
         errors: ["Failed to save spot"],
-        values: { name, category, description, city, country },
+        values: {
+          name: name?.toString() ?? "",
+          category: category?.toString() ?? "",
+          description: description?.toString() ?? "",
+          city: city?.toString() ?? "",
+          country: country?.toString() ?? "",
+        },
       };
     }
     onSuccess?.();
@@ -142,7 +182,13 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
 
     return {
       errors: ["Something went wrong. Try again."],
-      values: { name, category, description, city, country },
+      values: {
+        name: name?.toString() ?? "",
+        category: category?.toString() ?? "",
+        description: description?.toString() ?? "",
+        city: city?.toString() ?? "",
+        country: country?.toString() ?? "",
+      },
     };
   }
 }
@@ -198,7 +244,7 @@ export default function SpotForm({
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [formState, formAction] = useActionState(
-    (prevState, formData) =>
+    (prevState: SpotFormState, formData: FormData) =>
       AddSpotAction(prevState, formData, selectedSpot, onSuccess),
     {
       errors: null,
