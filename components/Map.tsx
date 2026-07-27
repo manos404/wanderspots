@@ -1,6 +1,6 @@
 "use client";
 
-import { Spot } from "../app/types/spot";
+import { Spot } from "@/lib/generated/prisma/client";
 import {
   MapContainer,
   TileLayer,
