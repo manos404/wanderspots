@@ -12,6 +12,7 @@ export default function Modal() {
   return (
     <Dialog
       // open={true}
+
       open={
         activeModal === "login" ||
         activeModal === "signup" ||
@@ -22,7 +23,7 @@ export default function Modal() {
     >
       <DialogContent
         className={`
-    p-0 m-auto pb-5 rounded-4xl text-white
+    p-0 m-auto pb-5 rounded-4xl text-white max-h-[80%] overflow-y-auto scrollbar-thin
     ${
       activeModal === "spotDetail"
         ? "!w-[700px] !max-w-[700px]"

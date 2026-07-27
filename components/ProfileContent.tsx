@@ -5,7 +5,7 @@ import { ArrowLeft, Filter, User } from "lucide-react";
 // import { useState } from "react";
 import { SpotWithAuthor } from "@/app/types/spot";
 import Link from "next/link";
- import Card from "./Card";
+import Card from "./Card";
 import dynamic from "next/dynamic";
 
 type Props = {
@@ -16,10 +16,9 @@ const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function ProfileContent({ spots, userName }: Props) {
   const [filter, setFilter] = useState("");
-  
- 
+
   const filteredSpots = filter
-    ? spots.filter((spot) => spot.location === filter)
+    ? spots.filter((spot) => spot.country === filter)
     : spots;
   return (
     <>
@@ -46,15 +45,15 @@ export default function ProfileContent({ spots, userName }: Props) {
             <div className="flex col items-center gap-2">
               <Filter className="text-gray-400 w-7" />
               <select
-                id="location"
-                name="loacation"
+                id="country"
+                name="country"
                 onChange={(e) => setFilter(e.target.value)}
                 className="w-full h-10  mt-2  border-2 rounded-lg pl-2 text-black focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">All Locations</option>
                 {spots.map((spot) => (
-                  <option key={spot.id} value={spot.location}>
-                    {spot.location}
+                  <option key={spot.id} value={spot.country}>
+                    {spot.country}
                   </option>
                 ))}
               </select>
@@ -67,7 +66,7 @@ export default function ProfileContent({ spots, userName }: Props) {
         {/* <SpotList initialSpots={filteredSpots} /> */}
       </div>
       <div className="mx-30 mt-10 rounded-2xl shadow-[-1px_10px_15px_rgba(0,0,0,0.15)]">
-        {filteredSpots.length && <Map spots={filteredSpots} />}
+        {filteredSpots.length > 0 && <Map spots={filteredSpots} />}
       </div>
       <div className="grid grid-cols-3 gap-10 my-10 mx-30">
         {filteredSpots.map((spot) => (

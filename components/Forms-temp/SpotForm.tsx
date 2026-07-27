@@ -4,10 +4,12 @@ import { SpotWithAuthor } from "@/app/types/spot";
 import { hasMinLength, isNotEmpty } from "@/app/util/validation";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
+import dynamic from "next/dynamic";
 
+const Map = dynamic(() => import("../Map"), { ssr: false });
 type SpotFormProps = {
   isEditing?: boolean;
   onSuccess?: () => void;
@@ -24,6 +26,8 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
   const image = formData.get("image") as File;
   const errors = [];
 
+  const lat = formData.get("lat");
+  const lng = formData.get("lng");
   try {
     if (!name) errors.push("Name is required");
     if (!category) errors.push("Category is required");
@@ -39,38 +43,45 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
         values: { name, category, description, city, country },
       };
 
-    const query = `${name}, ${city}, ${country}`;
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-        query
-      )}&format=jsonv2&addressdetails=1`
-    );
-    const locationData = await response.json();
+    let latitude: number, longitude: number, searchLocation: string;
 
-    console.log(locationData);
+    if (lat && lng) {
+      latitude = parseFloat(lat as string);
+      longitude = parseFloat(lng as string);
+      searchLocation = [city, country].filter(Boolean).join(", ");
+    } else {
+      const query = `${name}, ${city}, ${country}`;
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+          query
+        )}&format=jsonv2&addressdetails=1`
+      );
+      const locationData = await response.json();
 
-    if (locationData.length === 0) {
-      return {
-        errors: ["Location not found. Try a more specific name."],
-        values: { name, category, description, city, country },
-      };
+      if (locationData.length === 0) {
+        return {
+          errors: ["Location not found. Try a more specific name."],
+          values: { name, category, description, city, country },
+        };
+      }
+
+      const address = locationData[0].address;
+
+      searchLocation = [
+        address.city,
+        address.town,
+        address.village,
+        address.municipality,
+        address.county,
+        address.state,
+        address.country,
+      ]
+        .filter(Boolean)
+        .join(", ");
+      latitude = parseFloat(locationData[0].lat);
+      longitude = parseFloat(locationData[0].lon);
     }
-
-    const address = locationData[0].address;
-
-    const searchLocation = [
-      address.city,
-      address.town,
-      address.village,
-      address.municipality,
-      address.county,
-      address.state,
-      address.country,
-    ]
-      .filter(Boolean)
-      .join(", ");
-    const latitude = parseFloat(locationData[0].lat);
-    const longitude = parseFloat(locationData[0].lon);
+    
     let imageUrl = selectedSpot?.imageUrl;
     let imageId = selectedSpot?.imageId;
 
@@ -151,6 +162,36 @@ export default function SpotForm({
   isEditing = false,
   onSuccess,
 }: SpotFormProps) {
+  const [activeButton, setActiveButton] = useState("search");
+  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
+  const [pickedLocation, setPickedLocation] = useState<{
+    city: string;
+    country: string;
+    displayName: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!position) return;
+
+    async function reverseGeocode() {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${position.lat}&lon=${position.lng}&format=jsonv2&addressdetails=1`
+      );
+      const data = await res.json();
+      const address = data.address;
+
+      setPickedLocation({
+        city: address.city || address.town || address.village || "",
+        country: address.country || "",
+        displayName: data.display_name,
+      });
+    }
+
+    reverseGeocode();
+  }, [position]);
+
   const router = useRouter();
   const { selectedSpot } = useModalStore();
   const [deleting, setDeleting] = useState(false);
@@ -162,6 +203,7 @@ export default function SpotForm({
       errors: null,
     }
   );
+  const { openModal } = useModalStore();
 
   async function handleDelete() {
     if (!selectedSpot) return;
@@ -221,22 +263,88 @@ export default function SpotForm({
             }
             className="w-full mt-2 resize-y   rounded-xl border border-gray-300 pl-2 pt-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <label htmlFor="city">City</label>
-          <input
-            type="text"
-            name="city"
-            placeholder="e.g., Portland"
-            defaultValue={formState.values?.city ?? selectedSpot?.city}
-            className=" h-10 mt-2  rounded-xl border border-gray-300 pl-2  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <label htmlFor="country">Country</label>
-          <input
-            type="text"
-            name="country"
-            placeholder="e.g., Portland, Oregon"
-            defaultValue={formState.values?.country ?? selectedSpot?.country}
-            className=" h-10 mt-2  rounded-xl border border-gray-300 pl-2  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+          <div className="flex flex-row w-fit gap-3 px-1 rounded-lg bg-gray-100 text-sm p-1">
+            <button
+              type="button"
+              className={`flex gap-1 items-center rounded-md px-2 py-1.5 ${
+                activeButton === "search" ? "text-blue-500 bg-white" : ""
+              }`}
+              onClick={() => setActiveButton("search")}
+            >
+              <span>Search by name</span>
+            </button>
+            <button
+              type="button"
+              className={`flex gap-1 items-center rounded-md px-2 py-1.5 ${
+                activeButton === "pick" ? "text-blue-500 bg-white" : ""
+              }`}
+              onClick={() => setActiveButton("pick")}
+            >
+              <span>Pick on map</span>
+            </button>
+          </div>
+          {activeButton === "search" && (
+            <>
+              <label htmlFor="city">City</label>
+              <input
+                type="text"
+                name="city"
+                key={pickedLocation?.city ?? "empty-city"}
+                placeholder="e.g., Portland"
+                defaultValue={
+                  pickedLocation?.city ??
+                  formState.values?.city ??
+                  selectedSpot?.city
+                }
+                className=" h-10 mt-2  rounded-xl border border-gray-300 pl-2  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <label htmlFor="country">Country</label>
+              <input
+                type="text"
+                name="country"
+                key={pickedLocation?.country ?? "empty-country"}
+                placeholder="e.g., Portland, Oregon"
+                defaultValue={
+                  pickedLocation?.country ??
+                  formState.values?.country ??
+                  selectedSpot?.country
+                }
+                className=" h-10 mt-2  rounded-xl border border-gray-300 pl-2  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </>
+          )}
+          {activeButton === "pick" && (
+            <div
+              className="mt-2 rounded-xl overflow-hidden"
+              style={{ height: "300px" }}
+            >
+              <Map
+                pickable
+                pickedPosition={position}
+                onPick={(lat, lng) => setPosition({ lat, lng })}
+              />
+            </div>
+          )}
+          {activeButton === "pick" && pickedLocation && (
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm text-gray-500">
+                📍 {pickedLocation.displayName}
+              </p>
+              <button
+                type="button"
+                onClick={() => setActiveButton("search")}
+                className="text-sm px-3 py-1.5 rounded-lg bg-blue-600 text-white shrink-0"
+              >
+                OK
+              </button>
+            </div>
+          )}
+          {position && (
+            <>
+              <input type="hidden" name="lat" value={position.lat} />
+              <input type="hidden" name="lng" value={position.lng} />
+            </>
+          )}
           <label htmlFor="image">Photo</label>
           <input
             type="file"
