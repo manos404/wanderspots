@@ -81,7 +81,7 @@ async function AddSpotAction(prevFormState, formData, selectedSpot, onSuccess) {
       latitude = parseFloat(locationData[0].lat);
       longitude = parseFloat(locationData[0].lon);
     }
-    
+
     let imageUrl = selectedSpot?.imageUrl;
     let imageId = selectedSpot?.imageId;
 

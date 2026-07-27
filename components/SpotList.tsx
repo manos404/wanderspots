@@ -62,7 +62,7 @@ export default function SpotList({
   return (
     <>
       <Modal />
-      <div className="mx-30 mt-15">
+      <div className="mx-2 md:mx-15 lg:mx-30  my-5 md:mt-15">
         <div className="border rounded-md  p-5">
           <div className=" flex col gap-3">
             <div className="relative w-full">
@@ -132,7 +132,7 @@ export default function SpotList({
         </div>
         {activeButton === "map" && <Map spots={filteredSpots} />}
         {activeButton === "grid" && (
-          <div className="grid grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-5 md:gap-10">
             {filteredSpots.map((spot) => (
               <Card key={spot.id} spot={spot} />
             ))}
