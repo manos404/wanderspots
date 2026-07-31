@@ -29,7 +29,6 @@ export default function ProfileContent({ spots, userName }: Props) {
         <ArrowLeft />
         <p>Back to Explore</p>
       </Link>
-      <Modal />
       <div className=" mx-3 md:mx-15 mt-5 md:mt-10 rounded-xl shadow-[0_10px_15px_rgba(0,0,0,0.15),0_0_4px_rgba(0,0,0,0.08)]">
         <div className="rounded-xl py-2 px-2 md:py-5 md:px-10">
           <div className=" gap-5 flex row mt-10 border-b-2 border-gray-200 pb-5">
@@ -69,7 +68,7 @@ export default function ProfileContent({ spots, userName }: Props) {
         {/* <SpotList initialSpots={filteredSpots} /> */}
       </div>
       <div className=" mx-3 md:mx-15 mt-10 rounded-2xl shadow-[-1px_10px_15px_rgba(0,0,0,0.15)]">
-        {/* {filteredSpots.length > 0 && <Map spots={filteredSpots} />} */}
+        {filteredSpots.length > 0 && <Map spots={filteredSpots} />}
       </div>
       <div className="grid md:grid-cols-3 gap-10 my-10  mx-3 md:mx-15">
         {filteredSpots.map((spot) => (

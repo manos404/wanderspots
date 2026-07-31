@@ -1,19 +1,21 @@
 import { auth } from "@/auth";
-import { SpotWithAuthor } from "../types/spot";
+import { SpotWithAuthor } from "@/app/types/spot";
 import { prisma } from "@/lib/prisma";
 import ProfileContent from "@/components/ProfileContent";
 import { SignInPrompt } from "@/components/SignInPrompt";
 
-export default async function Profile() {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function UserProfile({ params }: Props) {
+  const { id } = await params;
   const session = await auth();
-
-  if (!session) {
-    return <SignInPrompt />;
-  }
-
+  console.log(id);
+  console.log(session);
   const spots: SpotWithAuthor[] = await prisma.spot.findMany({
     where: {
-      authorId: session.user?.id,
+      authorId: id,
     },
     orderBy: {
       createdAt: "desc",
@@ -23,12 +25,11 @@ export default async function Profile() {
       likes: true,
     },
   });
+  console.log(spots);
   const spotsWithLikes = spots.map((spot) => ({
     ...spot,
     likedByUser: spot.likes.some((like) => like.userId === session?.user?.id),
   }));
-  //   console.log(spots);
-  return (
-    <ProfileContent spots={spotsWithLikes} userName={session.user?.name} />
-  );
+
+  return <h1>UserProfile</h1>;
 }

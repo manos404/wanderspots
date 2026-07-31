@@ -24,7 +24,9 @@ export default function Modal() {
       <DialogContent
         className={`
     p-0 m-auto pb-5 rounded-4xl text-white max-h-[80%] overflow-y-auto scrollbar-thin
-    ${activeModal === "spotDetail" ? "!max-w-[700px]" : "!max-w-[900px]"}
+    ${activeModal === "spotDetail" && "!max-w-[700px]"}
+    ${activeModal === "addSpot" && "!max-w-[900px]"}
+    ${(activeModal === "login" || activeModal === "signup") && "!max-w-[600px]"}
   `}
       >
         {(activeModal === "login" || activeModal === "signup") && <AuthForm />}

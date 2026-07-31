@@ -58,7 +58,7 @@ export default function Map({
     <MapContainer
       center={[37.8165449, 20.8642323]}
       zoom={4}
-      style={{ height: "500px", width: "100%" }}
+      style={{ height: "600px", width: "100%"}}
       className="rounded-2xl "
     >
       {pickable && onPick && <ClickHandler onPick={onPick} />}

@@ -50,9 +50,9 @@ export default function Card({ spot, editable = false }: CardProps) {
       rounded-md bg-gray-600 text-white px-3 py-1
       text-sm shadow
       items-center
-      opacity-0
-      transition-opacity duration-200
-      group-hover:opacity-100
+      lg:opacity-0
+      lg:transition-opacity duration-200
+      lg: group-hover:opacity-100
     "
           onClick={(e) => {
             e.stopPropagation();

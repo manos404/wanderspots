@@ -361,10 +361,7 @@ export default function SpotForm({
             </>
           )}
           {activeButton === "pick" && (
-            <div
-              className="mt-2 rounded-xl overflow-hidden"
-              style={{ height: "300px" }}
-            >
+            <div className="mt-2 rounded-xl overflow-hidden">
               <Map
                 pickable
                 pickedPosition={position}

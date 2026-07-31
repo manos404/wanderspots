@@ -61,7 +61,6 @@ export default function SpotList({
   };
   return (
     <>
-      <Modal />
       <div className="mx-2 md:mx-15 lg:mx-30  my-5 md:mt-15">
         <div className="border rounded-md  p-5">
           <div className=" flex col gap-3">

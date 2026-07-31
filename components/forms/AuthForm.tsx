@@ -6,6 +6,7 @@ import { useModalStore } from "@/app/store/useModalStore";
 import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { auth } from "@/auth";
+import { useRouter } from "next/navigation";
 
 type AuthState = {
   errors: string[] | null;
@@ -13,7 +14,7 @@ type AuthState = {
 export default function AuthForm() {
   const { activeModal, openModal, closeModal } = useModalStore();
   // let activeModal === 'signup' = false;
-
+  const router = useRouter();
   async function SigninAction(
     prevFormState: AuthState,
     formData: FormData
@@ -42,6 +43,7 @@ export default function AuthForm() {
     }
     const session = await getSession();
     closeModal();
+    router.refresh();
     toast.success(`Welcome back, ${session?.user?.name}! 👋`, {
       style: {
         background: "linear-gradient(to right, #2563eb, #9333ea)",
@@ -91,6 +93,7 @@ export default function AuthForm() {
       redirect: false,
     });
     closeModal();
+    router.refresh();
     toast.success(`Welcome to WanderSpots, ${name}! 👋`);
     return { errors: null };
   }

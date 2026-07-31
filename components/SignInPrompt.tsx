@@ -9,7 +9,7 @@ export function SignInPrompt() {
 
   return (
     <>
-      <Modal />
+     
       <div className="flex items-center justify-center mt-30  flex-col gap-2">
         <User size={50} />
         <h1 className="text-lg">Please sign in</h1>
