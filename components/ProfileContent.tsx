@@ -11,10 +11,15 @@ import dynamic from "next/dynamic";
 type Props = {
   spots: SpotWithAuthor[];
   userName: string | null | undefined;
+  isOwnProfile: boolean;
 };
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
-export default function ProfileContent({ spots, userName }: Props) {
+export default function ProfileContent({
+  spots,
+  userName,
+  isOwnProfile,
+}: Props) {
   const [filter, setFilter] = useState("");
 
   const filteredSpots = filter
@@ -37,7 +42,7 @@ export default function ProfileContent({ spots, userName }: Props) {
               <User className="md:size-10" />
             </div>
             <span className="flex-col gap-5 items-center text-lg md:text-2xl">
-              {userName + "'s Travel Map"}
+              {isOwnProfile ? "Your Travel Map" : userName + "'s Travel Map"}{" "}
               <p className="text-base md:text-lg text-gray-500">
                 {spots.length} spots discovered
               </p>
@@ -72,7 +77,7 @@ export default function ProfileContent({ spots, userName }: Props) {
       </div>
       <div className="grid md:grid-cols-3 gap-10 my-10  mx-3 md:mx-15">
         {filteredSpots.map((spot) => (
-          <Card key={spot.id} spot={spot} editable />
+          <Card key={spot.id} spot={spot} editable={isOwnProfile} />
         ))}
       </div>
     </>

@@ -29,6 +29,10 @@ export default async function Profile() {
   }));
   //   console.log(spots);
   return (
-    <ProfileContent spots={spotsWithLikes} userName={session.user?.name} />
+    <ProfileContent
+      spots={spotsWithLikes}
+      userName={session.user?.name}
+      isOwnProfile={true}
+    />
   );
 }

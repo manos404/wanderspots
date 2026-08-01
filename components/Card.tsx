@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { Calendar, Heart, MapPin, Pencil } from "lucide-react";
 import { SpotWithAuthor } from "@/app/types/spot";
-import { useState } from "react";
 import { useModalStore } from "@/app/store/useModalStore";
-import Modal from "./Modal";
+import { useEffect } from "react";
+import { useLikesStore } from "@/app/store/useLikesStore";
 
 interface CardProps {
   spot: SpotWithAuthor;
@@ -13,9 +13,18 @@ interface CardProps {
 }
 
 export default function Card({ spot, editable = false }: CardProps) {
-  const [liked, setLiked] = useState(spot.likedByUser ?? false);
-  const [likeCount, setLikeCount] = useState(spot.likesCount);
   const { openModal, selectedSpot } = useModalStore();
+  const { likes, initLike, toggleLike } = useLikesStore();
+
+  useEffect(() => {
+    initLike(spot.id, spot.likedByUser ?? false, spot.likesCount);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spot.id]);
+
+  const current = likes[spot.id] ?? {
+    liked: spot.likedByUser ?? false,
+    likeCount: spot.likesCount,
+  };
 
   async function handleLike(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation(); // Σταματάει το onClick του div
@@ -24,13 +33,11 @@ export default function Card({ spot, editable = false }: CardProps) {
     });
     const data = await res.json();
 
-    if (data.liked) {
-      setLiked(true);
-      setLikeCount((prev) => prev + 1);
-    } else {
-      setLiked(false);
-      setLikeCount((prev) => prev - 1);
-    }
+    toggleLike(
+      spot.id,
+      data.liked,
+      data.liked ? current.likeCount + 1 : current.likeCount - 1
+    );
   }
 
   return (
@@ -95,7 +102,7 @@ export default function Card({ spot, editable = false }: CardProps) {
         <p className="text-sm text-gray-500 mt-3">{spot.description}</p>
 
         {/* AUTHOR */}
-        <div className="flex flex-row justify-between mt-5">
+        <div className="flex flex-row justify-between mt-5 ">
           <div className="flex  items-center gap-2 ">
             {/* AVATAR */}
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
@@ -115,8 +122,10 @@ export default function Card({ spot, editable = false }: CardProps) {
             className="flex flex-row gap-2 hover:text-red-500 transition-colors "
             onClick={(e) => handleLike(e)}
           >
-            <Heart className={liked ? "fill-red-500 stroke-red-500" : ""} />
-            <span>{likeCount}</span>
+            <Heart
+              className={current.liked ? "fill-red-500 stroke-red-500" : ""}
+            />
+            <span>{current.likeCount}</span>
           </div>
         </div>
       </div>

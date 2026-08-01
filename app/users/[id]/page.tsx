@@ -13,6 +13,9 @@ export default async function UserProfile({ params }: Props) {
   const session = await auth();
   console.log(id);
   console.log(session);
+
+  const user = await prisma.user.findUnique({ where: { id } });
+
   const spots: SpotWithAuthor[] = await prisma.spot.findMany({
     where: {
       authorId: id,
@@ -30,6 +33,13 @@ export default async function UserProfile({ params }: Props) {
     ...spot,
     likedByUser: spot.likes.some((like) => like.userId === session?.user?.id),
   }));
+  const isOwnProfile = session?.user?.id === id;
 
-  return <h1>UserProfile</h1>;
+  return (
+    <ProfileContent
+      spots={spotsWithLikes}
+      userName={user?.name}
+      isOwnProfile={isOwnProfile}
+    />
+  );
 }
