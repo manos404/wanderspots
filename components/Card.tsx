@@ -13,7 +13,7 @@ interface CardProps {
 }
 
 export default function Card({ spot, editable = false }: CardProps) {
-  const { openModal, selectedSpot } = useModalStore();
+  const { openModal } = useModalStore();
   const { likes, initLike, toggleLike } = useLikesStore();
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useLikesStore } from "@/app/store/useLikesStore";
 
 export default function SpotDetail() {
-  const { selectedSpot } = useModalStore();
+  const { selectedSpot, closeModal } = useModalStore();
   const { likes, initLike, toggleLike } = useLikesStore();
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function SpotDetail() {
           {spot.category}
         </span>
         <p className="mt-2">{spot.description}</p>
-        <Link href={`/users/${spot.authorId}`}>
+        <Link href={`/users/${spot.authorId}`} onClick={closeModal}>
           <div className="flex  items-center gap-2 mt-2">
             {/* AVATAR */}
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">

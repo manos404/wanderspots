@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { SpotWithAuthor } from "../types/spot";
+import { Spot, User, Like } from "@/lib/generated/prisma/client"
 
 type ModalType = 'login' | 'signup' | 'addSpot' | 'spotDetail' | null
 interface PickedLocation {
@@ -12,7 +13,7 @@ interface PickedLocation {
 interface ModalStore {
     activeModal: ModalType
     selectedSpot: SpotWithAuthor | null
-    openModal: (type: ModalType, spot?: SpotWithAuthor | null) => void
+    openModal: (type: ModalType, spot?: SpotWithAuthor|Spot | null) => void
     closeModal: () => void
 
     isMapPickerOpen: boolean

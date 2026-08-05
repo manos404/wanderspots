@@ -13,6 +13,7 @@ import L from "leaflet";
 import { divIcon } from "leaflet";
 import { renderToString } from "react-dom/server";
 import { MapPin } from "lucide-react";
+import { useModalStore } from "@/app/store/useModalStore";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -54,11 +55,12 @@ export default function Map({
   onPick,
   pickedPosition,
 }: MapProps) {
+  const { openModal } = useModalStore();
   return (
     <MapContainer
       center={[37.8165449, 20.8642323]}
       zoom={4}
-      style={{ height: "600px", width: "100%"}}
+      style={{ height: "600px", width: "100%" }}
       className="rounded-2xl "
     >
       {pickable && onPick && <ClickHandler onPick={onPick} />}
@@ -83,8 +85,17 @@ export default function Map({
           position={[spot.latitude, spot.longitude]}
         >
           <Popup>
-            <h1>{spot.name}</h1>
-            <h2>{spot.description}</h2>
+            <div className="flex flex-col">
+              <h1 className="text-base">{spot.name}</h1>
+              <h2 className="text-sm">{spot.description}</h2>
+
+              <button
+                className="self-end text-blue-600"
+                onClick={() => openModal("spotDetail", spot)}
+              >
+                Click to view
+              </button>
+            </div>
           </Popup>
         </Marker>
       ))}
