@@ -1,6 +1,7 @@
 "use client";
+import { SpotWithAuthor } from "@/app/types/spot";
 
-import { Spot } from "@/lib/generated/prisma/client";
+// import { Spot } from "@/lib/generated/prisma/client";
 import {
   MapContainer,
   TileLayer,
@@ -15,7 +16,7 @@ import { renderToString } from "react-dom/server";
 import { MapPin } from "lucide-react";
 import { useModalStore } from "@/app/store/useModalStore";
 
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -24,7 +25,7 @@ L.Icon.Default.mergeOptions({
 });
 
 interface MapProps {
-  spots?: Spot[];
+  spots?: SpotWithAuthor[];
   pickable?: boolean;
   onPick?: (lat: number, lng: number) => void;
   pickedPosition?: { lat: number; lng: number } | null;

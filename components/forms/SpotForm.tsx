@@ -1,6 +1,6 @@
 "use client";
 import { useModalStore } from "@/app/store/useModalStore";
-import { SpotWithAuthor } from "@/app/types/spot";
+import { Spot } from "@/lib/generated/prisma/client";
 import { hasMinLength, isNotEmpty } from "@/app/util/validation";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -26,12 +26,12 @@ type SpotFormProps = {
   onSuccess?: () => void;
 };
 type SubmitButtonProps = {
-  selectedSpot: SpotWithAuthor | null;
+  selectedSpot: Spot | null;
 };
 async function AddSpotAction(
   prevFormState: SpotFormState,
   formData: FormData,
-  selectedSpot: SpotWithAuthor | null,
+  selectedSpot: Spot | null,
   onSuccess?: () => void
 ): Promise<SpotFormState> {
   const name = formData.get("name");
