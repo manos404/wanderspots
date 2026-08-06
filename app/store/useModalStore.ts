@@ -12,8 +12,8 @@ interface PickedLocation {
 }
 interface ModalStore {
     activeModal: ModalType
-    selectedSpot: SpotWithAuthor | null
-    openModal: (type: ModalType, spot?: SpotWithAuthor|Spot | null) => void
+    selectedSpot: SpotWithAuthor | Spot | null
+    openModal: (type: ModalType, spot?: SpotWithAuthor | Spot | null) => void
     closeModal: () => void
 
     isMapPickerOpen: boolean
