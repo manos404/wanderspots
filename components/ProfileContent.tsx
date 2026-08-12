@@ -1,7 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import Modal from "./Modal";
-import { ArrowLeft, Filter, User } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, Filter, Globe, Heart, MapPin, User } from "lucide-react";
 // import { useState } from "react";
 import { SpotWithAuthor } from "@/app/types/spot";
 import Link from "next/link";
@@ -25,6 +24,10 @@ export default function ProfileContent({
   const filteredSpots = filter
     ? spots.filter((spot) => spot.country === filter)
     : spots;
+
+  const totalSpots = spots.length;
+  const totalLikes = spots.reduce((sum, spot) => sum + spot.likesCount, 0);
+  const uniqueCountries = new Set(spots.map((spot) => spot.country)).size;
   return (
     <>
       <Link
@@ -43,9 +46,25 @@ export default function ProfileContent({
             </div>
             <span className="flex-col gap-5 items-center text-lg md:text-2xl">
               {isOwnProfile ? "Your Travel Map" : userName + "'s Travel Map"}{" "}
-              <p className="text-base md:text-lg text-gray-500">
+              <div className="flex items gap-5">
+                <span className="flex row gap-1 items-center">
+                  <MapPin color="blue" />
+                  {totalSpots} {totalSpots == 1 ? " spot" : " spots"}
+                </span>
+                <span className="flex row gap-1 items-center">
+                  <Heart color="red" />
+                  {totalLikes}
+                  {totalLikes == 1 ? " like" : " likes"}
+                </span>
+                <span className="flex row gap-1 items-center">
+                  <Globe color="green" />
+                  {uniqueCountries}
+                  {uniqueCountries > 1 ? " countries" : " country"}
+                </span>
+              </div>
+              {/* <p className="text-base md:text-lg text-gray-500">
                 {spots.length} spots discovered
-              </p>
+              </p> */}
             </span>
           </div>
           <div className="flex row justify-between items-center pt-5">

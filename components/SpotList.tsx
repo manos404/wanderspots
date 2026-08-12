@@ -7,16 +7,19 @@ import {
   Search,
   SlidersHorizontal,
 } from "lucide-react";
-import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { SpotWithAuthor } from "@/app/types/spot";
+import { useEffect, useMemo, useState } from "react";
+import { useModalStore } from "@/app/store/useModalStore";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function SpotList({
   initialSpots,
+  openSpotId,
 }: {
   initialSpots: SpotWithAuthor[];
+  openSpotId?: string;
 }) {
   const [activeButton, setActiveButton] = useState("map");
   // const [filteredSpots, setFilteredSpots] = useState(initialSpots);
@@ -24,7 +27,13 @@ export default function SpotList({
   const [searchValue, setSearchValue] = useState("");
 
   const [selectedCategory, setSelectedCategory] = useState("All");
-
+  const { openModal } = useModalStore();
+  useEffect(() => {
+    if (!openSpotId) return;
+    const spot = initialSpots.find((s) => s.id === openSpotId);
+    if (spot) openModal("spotDetail", spot);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openSpotId]);
   const categories = [
     "All",
     "Food & Drink",

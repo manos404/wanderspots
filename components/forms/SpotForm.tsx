@@ -76,7 +76,7 @@ async function AddSpotAction(
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
           query
-        )}&format=jsonv2&addressdetails=1`
+        )}&format=jsonv2&addressdetails=1&accept-language=en`
       );
       const locationData = await response.json();
 

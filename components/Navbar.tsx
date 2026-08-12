@@ -45,7 +45,7 @@ export default function Navbar() {
               </span>
             </Link>
             <button onClick={() => signOut()}>
-              <LogOut className="size-4 md:size-6" />
+              <LogOut className="size-4 md:size-6 md:ml-2" />
             </button>
           </div>
         ) : (
