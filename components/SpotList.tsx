@@ -1,6 +1,5 @@
 "use client";
 import Card from "./Card";
-import Modal from "./Modal";
 import {
   LayoutGrid,
   Map as MapIcon,

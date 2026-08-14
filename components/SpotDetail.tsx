@@ -1,5 +1,5 @@
 import { useModalStore } from "@/app/store/useModalStore";
-import { Calendar, Heart, MapPin, User } from "lucide-react";
+import { Calendar, Heart, MapPin, Share2, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -42,7 +42,7 @@ export default function SpotDetail() {
   }
 
   return (
-    <div className="w-full rounded-2xl  max-h-[90vh] overflow-y-auto   text-black">
+    <div className="w-full rounded-2xl  max-h-[90vh] overflow-y-auto overflow-x-hidden  text-black">
       <div className="relative w-full h-100">
         <Image
           src={spot.imageUrl}
@@ -61,14 +61,23 @@ export default function SpotDetail() {
               {spot.city + ", " + spot.country}
             </p>
           </div>
-          <div
-            className="flex flex-col border-2 rounded-lg  px-3 py-2 items-center gap-2 hover:text-red-500 transition-colors text-lg"
-            onClick={handleLike}
-          >
-            <Heart
-              className={current.liked ? "fill-red-500 stroke-red-500" : ""}
-            />
-            <span>{current.likeCount}</span>
+          <div className="flex row gap-2">
+            <div
+              className="flex flex-col border-2 rounded-lg px-2 py-2 items-center gap-2 hover:border-blue-600 hover:text-blue-600 transition-colors text-lg"
+              // onClick={}
+            >
+              <Share2 />
+              <span>share</span>
+            </div>
+            <div
+              className="flex flex-col border-2 rounded-lg  px-3 py-2 items-center gap-2 hover:border-red-500 hover:text-red-500 transition-colors text-lg"
+              onClick={handleLike}
+            >
+              <Heart
+                className={current.liked ? "fill-red-500 stroke-red-500" : ""}
+              />
+              <span>{current.likeCount}</span>
+            </div>
           </div>
         </div>
         <span className="bg-blue-50 px-2 text-blue-700 rounded-2xl text-base p-1  ">
@@ -78,7 +87,7 @@ export default function SpotDetail() {
         <Link href={`/users/${spot.authorId}`} onClick={closeModal}>
           <div className="flex  items-center gap-2 mt-2">
             {/* AVATAR */}
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
+            <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
               {/* {spot.author.avatar} */}
             </div>
             {/* NAME + DATE */}
