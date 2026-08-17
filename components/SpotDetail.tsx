@@ -1,5 +1,12 @@
 import { useModalStore } from "@/app/store/useModalStore";
-import { Calendar, Heart, MapPin, Share2, User } from "lucide-react";
+import {
+  Calendar,
+  Heart,
+  MapPin,
+  Navigation,
+  Share2,
+  User,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -46,7 +53,7 @@ export default function SpotDetail() {
     e.stopPropagation();
     const canShare = typeof navigator.share === "function";
 
-    const shareUrl = `${window.location.origin}/spots/${spot.id}`;
+    const shareUrl = `${window.location.origin}/spots/${spot.id}?from=share`;
     console.log(shareUrl);
     if (canShare) {
       try {
@@ -60,6 +67,10 @@ export default function SpotDetail() {
       await navigator.clipboard.writeText(shareUrl);
       toast.success("Link copied to clipboard!");
     }
+  }
+
+  function handleShowOnMap() {
+    console.log(spot);
   }
 
   return (
@@ -83,15 +94,33 @@ export default function SpotDetail() {
             </p>
           </div>
           <div className="flex row gap-2">
+            <Link
+              href={`/spots/${spot.id}`}
+              onClick={(e) => {
+                closeModal();
+                if (window.location.pathname === `/spots/${spot.id}`) {
+                  e.preventDefault();
+                  window.location.reload();
+                }
+              }}
+            >
+              <div
+                className="flex flex-col border-2 rounded-lg px-3 py-2 items-center gap-2 hover:border-blue-700 hover:text-blue-700 transition-colors text-lg"
+                onClick={handleShowOnMap}
+              >
+                <Navigation />
+                <span>Map</span>
+              </div>
+            </Link>
             <div
-              className="flex flex-col border-2 rounded-lg px-2 py-2 items-center gap-2 hover:border-blue-600 hover:text-blue-600 transition-colors text-lg"
+              className="flex flex-col border-2 rounded-lg px-1 py-2 items-center gap-2 hover:border-blue-600 hover:text-blue-600 transition-colors text-lg"
               onClick={handleShare}
             >
               <Share2 />
-              <span>share</span>
+              <span>Share</span>
             </div>
             <div
-              className="flex flex-col border-2 rounded-lg  px-3 py-2 items-center gap-2 hover:border-red-500 hover:text-red-500 transition-colors text-lg"
+              className="flex flex-col border-2 rounded-lg  px-4 py-2 items-center gap-2 hover:border-red-500 hover:text-red-500 transition-colors text-lg"
               onClick={handleLike}
             >
               <Heart
@@ -117,7 +146,6 @@ export default function SpotDetail() {
                 <User size={13} className="text-gray-500" />
                 {spot.author.name}
               </span>
-
               <span className="flex items-center text-xs gap-1 text-gray-500">
                 <Calendar size={12} />
                 {new Date(spot.createdAt).toLocaleDateString()}

@@ -41,10 +41,10 @@ export default function ProfileContent({
         <div className="rounded-xl py-2 px-2 md:py-5 md:px-10">
           <div className=" gap-5 flex row mt-10 border-b-2 border-gray-200 pb-5">
             {/* <div className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center"> */}
-            <div className="size-10 md:size-15 rounded-full bg-gradient-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
+            <div className="size-10 md:size-15 rounded-full bg-linear-to-br from-blue-600 to-purple-400 text-white flex items-center justify-center font-semibold">
               <User className="md:size-10" />
             </div>
-            <span className="flex-col gap-5 items-center text-lg md:text-2xl">
+            <span className="flex-col gap-5 items-center text-lg md:text-lg">
               {isOwnProfile ? "Your Travel Map" : userName + "'s Travel Map"}{" "}
               <div className="flex items gap-5">
                 <span className="flex row gap-1 items-center">
@@ -74,7 +74,7 @@ export default function ProfileContent({
                 id="country"
                 name="country"
                 onChange={(e) => setFilter(e.target.value)}
-                className="w-full h-10  mt-2  border-2 rounded-lg pl-2 text-black focus:ring-blue-500 focus:border-blue-500"
+                className="w-full h-10 text-lg  mt-2  border-2 rounded-lg pl-2 text-black focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">All Locations</option>
                 {spots.map((spot) => (

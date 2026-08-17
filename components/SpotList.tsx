@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { SpotWithAuthor } from "@/app/types/spot";
 import { useEffect, useMemo, useState } from "react";
 import { useModalStore } from "@/app/store/useModalStore";
+import { useSearchParams } from "next/navigation";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -27,12 +28,18 @@ export default function SpotList({
 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { openModal } = useModalStore();
+  const searchParams = useSearchParams();
+
+  const fromShare = searchParams.get("from") === "share";
+
   useEffect(() => {
     if (!openSpotId) return;
+    if (!fromShare) return;
     const spot = initialSpots.find((s) => s.id === openSpotId);
     if (spot) openModal("spotDetail", spot);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openSpotId]);
+
   const categories = [
     "All",
     "Food & Drink",
@@ -137,7 +144,9 @@ export default function SpotList({
             </button>
           </div>
         </div>
-        {activeButton === "map" && <Map spots={filteredSpots} />}
+        {activeButton === "map" && (
+          <Map spots={filteredSpots} openSpotId={openSpotId} />
+        )}
         {activeButton === "grid" && (
           <div className="grid md:grid-cols-3 gap-5 md:gap-10">
             {filteredSpots.map((spot) => (
