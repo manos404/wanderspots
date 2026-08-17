@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useLikesStore } from "@/app/store/useLikesStore";
+import { toast } from "sonner";
 
 export default function SpotDetail() {
   const { selectedSpot, closeModal } = useModalStore();
@@ -41,6 +42,26 @@ export default function SpotDetail() {
     );
   }
 
+  async function handleShare(e: React.MouseEvent) {
+    e.stopPropagation();
+    const canShare = typeof navigator.share === "function";
+
+    const shareUrl = `${window.location.origin}/spots/${spot.id}`;
+    console.log(shareUrl);
+    if (canShare) {
+      try {
+        await navigator.share({
+          title: spot.name,
+          text: spot.description,
+          url: shareUrl,
+        });
+      } catch (error) {}
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied to clipboard!");
+    }
+  }
+
   return (
     <div className="w-full rounded-2xl  max-h-[90vh] overflow-y-auto overflow-x-hidden  text-black">
       <div className="relative w-full h-100">
@@ -64,7 +85,7 @@ export default function SpotDetail() {
           <div className="flex row gap-2">
             <div
               className="flex flex-col border-2 rounded-lg px-2 py-2 items-center gap-2 hover:border-blue-600 hover:text-blue-600 transition-colors text-lg"
-              // onClick={}
+              onClick={handleShare}
             >
               <Share2 />
               <span>share</span>
