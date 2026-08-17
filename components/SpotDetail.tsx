@@ -12,10 +12,12 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useLikesStore } from "@/app/store/useLikesStore";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 export default function SpotDetail() {
   const { selectedSpot, closeModal } = useModalStore();
   const { likes, initLike, toggleLike } = useLikesStore();
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (!selectedSpot) return;
@@ -37,6 +39,11 @@ export default function SpotDetail() {
 
   async function handleLike(e: React.MouseEvent) {
     e.stopPropagation();
+    if (!session) {
+      toast.error("Please log in first");
+      return;
+    }
+
     const res = await fetch(`/api/spots/${spot.id}/like`, {
       method: "POST",
     });

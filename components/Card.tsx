@@ -6,6 +6,8 @@ import { SpotWithAuthor } from "@/app/types/spot";
 import { useModalStore } from "@/app/store/useModalStore";
 import { useEffect } from "react";
 import { useLikesStore } from "@/app/store/useLikesStore";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 interface CardProps {
   spot: SpotWithAuthor;
@@ -15,6 +17,7 @@ interface CardProps {
 export default function Card({ spot, editable = false }: CardProps) {
   const { openModal } = useModalStore();
   const { likes, initLike, toggleLike } = useLikesStore();
+  const { data: session } = useSession();
 
   useEffect(() => {
     initLike(spot.id, spot.likedByUser ?? false, spot.likesCount);
@@ -28,6 +31,11 @@ export default function Card({ spot, editable = false }: CardProps) {
 
   async function handleLike(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation(); // Σταματάει το onClick του div
+    if (!session) {
+      toast.error("Please log in first");
+      return;
+    }
+
     const res = await fetch(`/api/spots/${spot.id}/like`, {
       method: "POST",
     });
