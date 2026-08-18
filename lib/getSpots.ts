@@ -6,7 +6,11 @@ export async function getSpotsWithLikes(
 ): Promise<SpotWithAuthor[]> {
     const spots: SpotWithAuthor[] = await prisma.spot.findMany({
         orderBy: { createdAt: "desc" },
-        include: { author: true, likes: true },
+        include: {
+            author: {
+                select: { id: true, name: true },
+            }, likes: true
+        },
     });
 
     return spots.map((spot) => ({

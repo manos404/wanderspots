@@ -24,7 +24,9 @@ export default async function UserProfile({ params }: Props) {
       createdAt: "desc",
     },
     include: {
-      author: true,
+      author: {
+        select: { id: true, name: true },
+      },
       likes: true,
     },
   });

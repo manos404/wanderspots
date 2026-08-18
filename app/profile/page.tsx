@@ -19,7 +19,9 @@ export default async function Profile() {
       createdAt: "desc",
     },
     include: {
-      author: true,
+      author: {
+        select: { id: true, name: true },
+      },
       likes: true,
     },
   });

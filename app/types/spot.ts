@@ -1,7 +1,10 @@
-import { Spot, User, Like } from "@/lib/generated/prisma/client"
+import { Spot, Like } from "@/lib/generated/prisma/client"
 
 export type SpotWithAuthor = Spot & {
-    author: User;
+    author: {
+        id: string;
+        name: string;
+    };
     likes: Like[];
     likedByUser?: boolean;
 }
